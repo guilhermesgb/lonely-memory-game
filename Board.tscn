@@ -1,32 +1,182 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://Card.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Board.gd" type="Script" id=2]
+[ext_resource path="res://Slot.tscn" type="PackedScene" id=3]
 
 [node name="Board" type="Node2D"]
+script = ExtResource( 2 )
+
+[node name="Slot" parent="." instance=ExtResource( 3 )]
+position = Vector2( 270, 410 )
+
+[node name="Slot2" parent="." instance=ExtResource( 3 )]
+position = Vector2( 270, 560 )
+
+[node name="Slot3" parent="." instance=ExtResource( 3 )]
+position = Vector2( 270, 260 )
+
+[node name="Slot4" parent="." instance=ExtResource( 3 )]
+position = Vector2( 180, 710 )
+
+[node name="Slot5" parent="." instance=ExtResource( 3 )]
+position = Vector2( 270, 710 )
+
+[node name="Slot6" parent="." instance=ExtResource( 3 )]
+position = Vector2( 270, 110 )
+
+[node name="Slot7" parent="." instance=ExtResource( 3 )]
+position = Vector2( 180, 260 )
+
+[node name="Slot8" parent="." instance=ExtResource( 3 )]
+position = Vector2( 180, 410 )
+
+[node name="Slot9" parent="." instance=ExtResource( 3 )]
+position = Vector2( 450, 560 )
+
+[node name="Slot10" parent="." instance=ExtResource( 3 )]
+position = Vector2( 360, 560 )
+
+[node name="Slot11" parent="." instance=ExtResource( 3 )]
+position = Vector2( 225, 860 )
+
+[node name="Slot12" parent="." instance=ExtResource( 3 )]
+position = Vector2( 450, 710 )
+
+[node name="Slot13" parent="." instance=ExtResource( 3 )]
+position = Vector2( 135, 860 )
+
+[node name="Slot14" parent="." instance=ExtResource( 3 )]
+position = Vector2( 90, 710 )
+
+[node name="Slot15" parent="." instance=ExtResource( 3 )]
+position = Vector2( 450, 410 )
+
+[node name="Slot16" parent="." instance=ExtResource( 3 )]
+position = Vector2( 360, 710 )
+
+[node name="Slot17" parent="." instance=ExtResource( 3 )]
+position = Vector2( 405, 860 )
+
+[node name="Slot18" parent="." instance=ExtResource( 3 )]
+position = Vector2( 450, 260 )
+
+[node name="Slot19" parent="." instance=ExtResource( 3 )]
+position = Vector2( 360, 410 )
+
+[node name="Slot20" parent="." instance=ExtResource( 3 )]
+position = Vector2( 360, 260 )
+
+[node name="Slot21" parent="." instance=ExtResource( 3 )]
+position = Vector2( 315, 860 )
+
+[node name="Slot22" parent="." instance=ExtResource( 3 )]
+position = Vector2( 180, 560 )
+
+[node name="Slot23" parent="." instance=ExtResource( 3 )]
+position = Vector2( 90, 260 )
+
+[node name="Slot24" parent="." instance=ExtResource( 3 )]
+position = Vector2( 360, 110 )
+
+[node name="Slot25" parent="." instance=ExtResource( 3 )]
+position = Vector2( 180, 110 )
+
+[node name="Slot26" parent="." instance=ExtResource( 3 )]
+position = Vector2( 90, 410 )
+
+[node name="Slot27" parent="." instance=ExtResource( 3 )]
+position = Vector2( 90, 110 )
+
+[node name="Slot28" parent="." instance=ExtResource( 3 )]
+position = Vector2( 450, 110 )
+
+[node name="Slot29" parent="." instance=ExtResource( 3 )]
+position = Vector2( 90, 560 )
 
 [node name="Card" parent="." instance=ExtResource( 1 )]
-position = Vector2( -124.359, -227.743 )
+position = Vector2( 646.602, 1297.04 )
 
 [node name="Card2" parent="." instance=ExtResource( 1 )]
-position = Vector2( -291.705, -228.182 )
+position = Vector2( 658.294, 1454.33 )
 
 [node name="Card3" parent="." instance=ExtResource( 1 )]
-position = Vector2( -302.375, -87.5482 )
+position = Vector2( 501.616, 1522.84 )
 
 [node name="Card4" parent="." instance=ExtResource( 1 )]
-position = Vector2( -101.628, -74.9411 )
+position = Vector2( 525.358, 1227.53 )
 
 [node name="Card5" parent="." instance=ExtResource( 1 )]
-position = Vector2( 83.077, -202.014 )
+position = Vector2( 1175.65, 1400 )
 
 [node name="Card6" parent="." instance=ExtResource( 1 )]
-position = Vector2( 74.526, -74.0635 )
+position = Vector2( 1143.65, 1440 )
 
 [node name="Card7" parent="." instance=ExtResource( 1 )]
-position = Vector2( -317.641, 58.434 )
+position = Vector2( 1011.65, 1444 )
 
 [node name="Card8" parent="." instance=ExtResource( 1 )]
-position = Vector2( -124.359, 46.4475 )
+position = Vector2( 1083.65, 1404 )
 
 [node name="Card9" parent="." instance=ExtResource( 1 )]
-position = Vector2( 86.9018, 55.4374 )
+position = Vector2( 1083.65, 1436 )
+
+[node name="Card10" parent="." instance=ExtResource( 1 )]
+position = Vector2( 1115.65, 1540 )
+
+[node name="Card11" parent="." instance=ExtResource( 1 )]
+position = Vector2( 1463.65, 1240 )
+
+[node name="Card12" parent="." instance=ExtResource( 1 )]
+position = Vector2( 1199.65, 1624 )
+
+[node name="Card13" parent="." instance=ExtResource( 1 )]
+position = Vector2( 927.654, 1624 )
+
+[node name="Card14" parent="." instance=ExtResource( 1 )]
+position = Vector2( 1247.26, 1468.2 )
+
+[node name="Card15" parent="." instance=ExtResource( 1 )]
+position = Vector2( 1254.39, 1168.86 )
+
+[node name="Card16" parent="." instance=ExtResource( 1 )]
+position = Vector2( 1047.7, 937.225 )
+
+[node name="Card17" parent="." instance=ExtResource( 1 )]
+position = Vector2( 709.592, 1004.93 )
+
+[node name="Card18" parent="." instance=ExtResource( 1 )]
+position = Vector2( 709.155, 1610.74 )
+
+[node name="Card19" parent="." instance=ExtResource( 1 )]
+position = Vector2( 1097.59, 1247.26 )
+
+[node name="Card20" parent="." instance=ExtResource( 1 )]
+position = Vector2( 1040.57, 1535.91 )
+
+[node name="Card21" parent="." instance=ExtResource( 1 )]
+position = Vector2( 947.916, 865.954 )
+
+[node name="Card22" parent="." instance=ExtResource( 1 )]
+position = Vector2( 1037.01, 1122.53 )
+
+[node name="Card23" parent="." instance=ExtResource( 1 )]
+position = Vector2( 1022.75, 1364.86 )
+
+[node name="Card24" parent="." instance=ExtResource( 1 )]
+position = Vector2( 823.19, 1475.33 )
+
+[node name="Card25" parent="." instance=ExtResource( 1 )]
+position = Vector2( 905.153, 1222.31 )
+
+[node name="Card26" parent="." instance=ExtResource( 1 )]
+position = Vector2( 873.081, 1079.77 )
+
+[node name="Card27" parent="." instance=ExtResource( 1 )]
+position = Vector2( 812.5, 1386.24 )
+
+[node name="Card28" parent="." instance=ExtResource( 1 )]
+position = Vector2( 805.373, 1268.64 )
+
+[node name="Card29" parent="." instance=ExtResource( 1 )]
+position = Vector2( 734.101, 1115.41 )

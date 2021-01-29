@@ -11,24 +11,32 @@ onready var longPressTimer = $LongPressTimer
 
 enum TouchType {NONE, SIMPLE_TAP, LONG_PRESS, DRAG}
 
-var startedPressingButton = false
-var isStillPressingButton = false
+var startedTouchPress = false
+var isStillTouchPressing = false
+var isPerformingDragging = false
 
 var touchType = TouchType.NONE
 var currentPosition = Vector2()
 var deltaPosition = Vector2()
 
+var parent
+
 func setup(owner):
-	currentPosition = owner.get_position()
+	parent = owner
+
+func is_detecting_touch():
+	return startedTouchPress or isStillTouchPressing or isPerformingDragging
 
 func _on_TouchInputArea_pressed():
-	startedPressingButton = true
+	currentPosition = parent.get_position()
+	startedTouchPress = true
 
 func _input(event):
-	if not startedPressingButton:
+	if not startedTouchPress:
 		return
 
 	elif event is InputEventScreenDrag and DRAG_ENABLED:
+		isPerformingDragging = true
 		touchType = TouchType.DRAG
 		var updatedPosition = Vector2(
 			event.get_position().x - deltaPosition.x,
@@ -50,14 +58,16 @@ func _input(event):
 		longPressTimer.start()
 
 func _process(_delta):
-	isStillPressingButton = Input.is_mouse_button_pressed(BUTTON_LEFT)
+	isStillTouchPressing = Input.is_mouse_button_pressed(BUTTON_LEFT)
 
 func _on_LongPressTimer_timeout():
-	if startedPressingButton and isStillPressingButton:
+	if startedTouchPress and isStillTouchPressing:
 		touchType = TouchType.LONG_PRESS
 
 func _on_TouchInputArea_released():
-	startedPressingButton = false
+	startedTouchPress = false
+	isStillTouchPressing = false
+	isPerformingDragging = false
 	longPressTimer.stop()
 
 	if touchType == TouchType.DRAG:

@@ -1,18 +1,22 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://icon.png" type="Texture" id=1]
+[ext_resource path="res://card_back.png" type="Texture" id=1]
 [ext_resource path="res://TouchInputDetector.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Card.gd" type="Script" id=3]
 
-[node name="Card" type="Node2D"]
+[node name="Card" type="Node2D" groups=[
+"cards",
+]]
 script = ExtResource( 3 )
 
 [node name="Sprite" type="Sprite" parent="."]
-position = Vector2( 385.797, 343.315 )
 texture = ExtResource( 1 )
-centered = false
 
 [node name="TouchInputDetector" parent="Sprite" instance=ExtResource( 2 )]
+
+[node name="TouchInputArea" parent="Sprite/TouchInputDetector" index="1"]
+scale = Vector2( 1, 1 )
+shape_centered = false
 [connection signal="dragged" from="Sprite/TouchInputDetector" to="." method="_on_TouchInputDetector_dragged"]
 [connection signal="dragging" from="Sprite/TouchInputDetector" to="." method="_on_TouchInputDetector_dragging"]
 [connection signal="long_pressed" from="Sprite/TouchInputDetector" to="." method="_on_TouchInputDetector_long_pressed"]
