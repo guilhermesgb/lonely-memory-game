@@ -3,10 +3,10 @@ extends Position2D
 var isOccupied = false
 
 func _draw():
-	draw_circle(Vector2.ZERO, 30, Color.blanchedalmond)
+	draw_circle(Vector2.ZERO, 15, Color("#b1876c"))
 
 func occupy():
-	modulate = Color.webmaroon
+	modulate = Color("#8a5939")
 	isOccupied = true
 
 func deoccupy():

@@ -1,5 +1,6 @@
 extends Node2D
 
+onready var rng = RandomNumberGenerator.new()
 onready var touchInputDetector = $Sprite/TouchInputDetector
 onready var slots = get_tree().get_nodes_in_group("slots")
 
@@ -7,6 +8,7 @@ var targetSlot
 var isLockedToSlot
 
 func _ready():
+	rng.randomize()
 	touchInputDetector.setup(self)
 	find_nearest_unoccupied_slot()
 
@@ -24,10 +26,11 @@ func find_nearest_unoccupied_slot():
 		if (distance < shortestDistance):
 			targetSlot = slot
 			shortestDistance = distance
+			set_z_index(get_z_index() + 1)
 
 func is_close_enough_to_target_slot():
 	var difference = position - targetSlot.global_position
-	return abs(difference.x) < 30 and abs(difference.y) < 30
+	return abs(difference.x) < 15 and abs(difference.y) < 15
 
 func lock_to_unoccupied_slot():
 	if not targetSlot.is_occupied():
@@ -41,13 +44,17 @@ func _physics_process(delta):
 	elif not isLockedToSlot and (targetSlot == null or targetSlot.is_occupied()):
 		find_nearest_unoccupied_slot()
 
-	set_position(lerp(global_position, targetSlot.global_position, 15 * delta))
+	set_position(lerp(global_position, targetSlot.global_position, rng.randf_range(0.8, 8) * delta))
+	set_rotation(lerp_angle(rotation, 0, rng.randf_range(0.8, 8) * delta))
 
 	if is_close_enough_to_target_slot():
+		set_z_index(lerp(z_index, 0, rng.randf_range(0.8, 8) * delta))
 		lock_to_unoccupied_slot()
 
 func _on_TouchInputDetector_dragging(position):
 	set_position(position)
+	look_at(position)
+	set_z_index(1)
 
 func _on_TouchInputDetector_dragged():
 	if isLockedToSlot:
