@@ -19,16 +19,26 @@ var touchType = TouchType.NONE
 var currentPosition = Vector2()
 var deltaPosition = Vector2()
 
-var parent
+var isEnabled = false
+var user
 
-func setup(owner):
-	parent = owner
+func setup(user):
+	self.user = user
+
+func disable():
+	isEnabled = false
+
+func enable():
+	isEnabled = true
 
 func is_detecting_touch():
-	return startedTouchPress or isStillTouchPressing or isPerformingDragging
+	return isEnabled and (startedTouchPress or isStillTouchPressing or isPerformingDragging)
 
 func _on_TouchInputArea_pressed():
-	currentPosition = parent.get_position()
+	if not isEnabled:
+		return
+
+	currentPosition = user.get_position()
 	startedTouchPress = true
 
 func _input(event):
@@ -58,13 +68,19 @@ func _input(event):
 		longPressTimer.start()
 
 func _process(_delta):
-	isStillTouchPressing = Input.is_mouse_button_pressed(BUTTON_LEFT)
+	if not isEnabled:
+		return
+
+	isStillTouchPressing = startedTouchPress and Input.is_mouse_button_pressed(BUTTON_LEFT)
 
 func _on_LongPressTimer_timeout():
 	if startedTouchPress and isStillTouchPressing:
 		touchType = TouchType.LONG_PRESS
 
 func _on_TouchInputArea_released():
+	if not isEnabled:
+		return
+
 	startedTouchPress = false
 	isStillTouchPressing = false
 	isPerformingDragging = false
