@@ -1,3 +1,5 @@
+*.apk
+
 .import/
 export.cfg
 export_presets.cfg

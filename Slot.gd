@@ -2,10 +2,19 @@ extends Position2D
 
 signal slot_occupied
 
+export(int) var MIN_LEVEL = 0
+
 var isOccupied = false
 
 #func _draw():
 #	draw_circle(Vector2.ZERO, 15, Color("#b1876c"))
+
+func setup(current_level):
+	if current_level >= MIN_LEVEL:
+		deoccupy()
+
+	else:
+		occupy()
 
 func occupy():
 	emit_signal("slot_occupied")

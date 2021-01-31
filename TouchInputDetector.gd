@@ -1,5 +1,12 @@
 extends Node2D
 
+enum TouchType {
+	NONE,
+	SIMPLE_TAP,
+	LONG_PRESS,
+	DRAG
+}
+
 signal tapped
 signal long_pressed
 signal dragging(position)
@@ -8,8 +15,6 @@ signal dragged
 export(bool) var DRAG_ENABLED = true
 
 onready var longPressTimer = $LongPressTimer
-
-enum TouchType {NONE, SIMPLE_TAP, LONG_PRESS, DRAG}
 
 var startedTouchPress = false
 var isStillTouchPressing = false
@@ -22,8 +27,8 @@ var deltaPosition = Vector2()
 var isEnabled = false
 var user
 
-func setup(user):
-	self.user = user
+func setup(touchInputUser):
+	user = touchInputUser
 
 func disable():
 	isEnabled = false
