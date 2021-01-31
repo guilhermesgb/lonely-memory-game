@@ -6,6 +6,7 @@
 
 [node name="Board" type="Node2D"]
 script = ExtResource( 2 )
+CURRENT_LEVEL = 4
 
 [node name="Slot" parent="." instance=ExtResource( 3 )]
 position = Vector2( 164.908, 120.137 )

@@ -3,6 +3,7 @@ extends Node2D
 const Global = preload("Global.gd")
 
 signal preparation_done
+signal earnable_points_updated(points)
 
 export(int) var CURRENT_LEVEL = 1
 
@@ -17,11 +18,19 @@ var occupiedSlotsCounter = 0
 var cardsSelectedForReveal = []
 var cardSelectedForWin = null
 
+var earnablePoints = 0
+var earnedPeeks = 0
+var fullPassesCount = 0
+
 func _ready():
 	rng.randomize()
+	calculate_earnable_points()
 	occupy_excess_slots()
 	keep_unoccupied_slots()
 	free_excess_cards()
+
+func calculate_earnable_points():
+	earnablePoints = 50 * CURRENT_LEVEL
 
 func occupy_excess_slots():
 	for slot in slots:
@@ -71,6 +80,7 @@ func _on_slot_occupied():
 	if (occupiedSlotsCounter == slots.size()):
 		assign_types_to_cards()
 		emit_signal("preparation_done")
+		emit_signal("earnable_points_updated", earnablePoints)
 		timer.start()
 
 func assign_types_to_cards():
@@ -119,6 +129,8 @@ func _on_card_select_for_reveal_updated(card, selected):
 	if (has_enough_cards_to_reveal(selection)):
 		if revealed_cards_form_pair(selection):
 			block_revealed_cards(selection)
+
+			punish_by_decreasing_earnable_points()
 
 		else:
 			block_selected_cards(selection)
@@ -182,6 +194,8 @@ func unblock_cards_for_selection():
 			card.set_as_selectable(false)
 			thereWereCardsToUnblock = true
 
+			fullPassesCount = fullPassesCount + 1
+
 	return thereWereCardsToUnblock
 
 func win_with_remaining_card(card):
@@ -201,3 +215,9 @@ func clear_selected_cards_for_win():
 	for card in cards:
 		if card.is_selected_for_win():
 			card.set_as_selectable(false)
+
+func punish_by_decreasing_earnable_points():
+	var totalEarnablePoints = 50 * CURRENT_LEVEL
+
+	earnablePoints = earnablePoints - (floor(totalEarnablePoints / cards.size()) * 2)
+	emit_signal("earnable_points_updated", earnablePoints)
