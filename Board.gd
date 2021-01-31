@@ -185,7 +185,7 @@ func unblock_cards_for_selection():
 	return thereWereCardsToUnblock
 
 func win_with_remaining_card(card):
-	card.set_selected_for_win(true)
+	card.set_locked_for_win(true)
 
 func _on_card_select_for_win_updated(card, selected):
 	clear_selected_cards_for_reveal()

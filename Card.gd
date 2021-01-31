@@ -7,7 +7,8 @@ enum CardState {
 	SELECTED_FOR_REVEAL,
 	SELECTED_FOR_WIN,
 	BLOCKED_FOR_SELECTION,
-	REVEALED_AS_PAIR
+	REVEALED_AS_PAIR,
+	LOCKED_FOR_WIN
 }
 
 signal card_destroyed(name)
@@ -69,10 +70,13 @@ func is_selected_for_reveal():
 	return currentState == CardState.SELECTED_FOR_REVEAL
 
 func is_selected_for_win():
-	return currentState == CardState.SELECTED_FOR_WIN
+	return currentState == CardState.SELECTED_FOR_WIN or currentState == CardState.LOCKED_FOR_WIN
 
 func set_selected_for_win(propagateUpdate):
 	do_set_state(CardState.SELECTED_FOR_WIN, propagateUpdate)
+
+func set_locked_for_win(propagateUpdate):
+	do_set_state(CardState.LOCKED_FOR_WIN, propagateUpdate)
 
 func is_blocked_for_selection():
 	return currentState == CardState.BLOCKED_FOR_SELECTION
@@ -93,14 +97,14 @@ func do_set_state(state, propagateUpdate):
 	var previousState = currentState
 	currentState = state
 
-	if currentState == CardState.SELECTED_FOR_WIN and propagateUpdate:
+	if currentState == CardState.SELECTED_FOR_WIN or currentState == CardState.LOCKED_FOR_WIN and propagateUpdate:
 		emit_signal("select_for_win_updated", self, true)
 
 	elif currentState == CardState.SELECTED_FOR_REVEAL and propagateUpdate:
 		emit_signal("select_for_reveal_updated", self, true)
 
 	elif currentState == CardState.SELECTABLE and propagateUpdate:
-		if previousState == CardState.SELECTED_FOR_WIN:
+		if previousState == CardState.SELECTED_FOR_WIN or previousState == CardState.LOCKED_FOR_WIN:
 			emit_signal("select_for_win_updated", self, false)
 
 		elif previousState == CardState.SELECTED_FOR_REVEAL:
@@ -116,6 +120,11 @@ func render_selected_state():
 		touchInputDetector.disable()
 
 	elif currentState == CardState.SELECTED_FOR_WIN:
+		sprite.modulate = Color("#EE8A44")
+		touchInputDetector.enable()
+		touchInputDetector.DRAG_ENABLED = true
+
+	elif currentState == CardState.LOCKED_FOR_WIN:
 		sprite.modulate = Color("#EE8A44")
 		touchInputDetector.enable()
 		touchInputDetector.DRAG_ENABLED = true
@@ -204,7 +213,7 @@ func _on_TouchInputDetector_tapped():
 	if currentState == CardState.SELECTED_FOR_WIN or currentState == CardState.SELECTED_FOR_REVEAL:
 		do_set_state(CardState.SELECTABLE, true)
 
-	else:
+	elif currentState == CardState.SELECTABLE:
 		do_set_state(CardState.SELECTED_FOR_REVEAL, true)
 
 func _on_TouchInputDetector_long_pressed():
