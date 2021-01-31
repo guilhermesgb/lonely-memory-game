@@ -2,9 +2,17 @@ extends Node2D
 
 const Global = preload("Global.gd")
 
+enum CardState {
+	SELECTABLE,
+	SELECTED_FOR_REVEAL,
+	SELECTED_FOR_WIN,
+	BLOCKED_FOR_SELECTION,
+	REVEALED_AS_PAIR
+}
+
 signal card_destroyed(name)
-signal select_for_reveal_updated(name)
-signal select_for_win_updated(name)
+signal select_for_reveal_updated(card, selected)
+signal select_for_win_updated(card, selected)
 
 onready var noise = OpenSimplexNoise.new()
 
@@ -15,9 +23,10 @@ onready var cards = get_tree().get_nodes_in_group("cards")
 
 var targetSlot
 var isLockedToSlot
-var isSelectedForReveal
-var isSelectedForWin
+
 var assignedType = Global.CardType.NONE
+
+var currentState = CardState.SELECTABLE
 
 var rng
 
@@ -31,8 +40,6 @@ func setup(board, randomNumberGenerator):
 	board.connect("preparation_done", self, "_on_preparation_done")
 
 	for card in cards:
-		card.connect("select_for_reveal_updated", self, "_on_select_for_reveal_updated")
-		card.connect("select_for_win_updated", self, "_on_select_for_win_updated")
 		card.connect("card_destroyed", self, "_on_card_destroyed")
 
 	touchInputDetector.setup(self)
@@ -49,46 +56,79 @@ func _on_preparation_done():
 func has_assigned_type():
 	return assignedType != Global.CardType.NONE
 
+func get_assigned_type():
+	return assignedType
+
 func set_assigned_type(typeToAssign):
 	assignedType = typeToAssign
 
+func set_as_selectable(propagateUpdate):
+	do_set_state(CardState.SELECTABLE, propagateUpdate)
+
 func is_selected_for_reveal():
-	return isSelectedForReveal
-
-func set_selected_for_reveal(selected):
-	isSelectedForReveal = selected
-
-	if isSelectedForReveal:
-		emit_signal("select_for_reveal_updated", self.name)
+	return currentState == CardState.SELECTED_FOR_REVEAL
 
 func is_selected_for_win():
-	return isSelectedForWin
+	return currentState == CardState.SELECTED_FOR_WIN
 
-func set_selected_for_win(selected):
-	isSelectedForWin = selected
+func set_selected_for_win(propagateUpdate):
+	do_set_state(CardState.SELECTED_FOR_WIN, propagateUpdate)
 
-	if isSelectedForWin:
-		emit_signal("select_for_win_updated", self.name)
+func is_blocked_for_selection():
+	return currentState == CardState.BLOCKED_FOR_SELECTION
 
-func _on_select_for_reveal_updated(_name):
-	set_selected_for_win(false)
+func set_blocked_for_selection():
+	set_state(CardState.BLOCKED_FOR_SELECTION)
 
-func _on_select_for_win_updated(_name):
-	if name == self.name:
-		return
+func is_revealed_as_pair():
+	return currentState == CardState.REVEALED_AS_PAIR
 
-	set_selected_for_reveal(false)
-	set_selected_for_win(false)
+func set_revealed_as_pair():
+	set_state(CardState.REVEALED_AS_PAIR)
+
+func set_state(state):
+	do_set_state(state, false)
+
+func do_set_state(state, propagateUpdate):
+	var previousState = currentState
+	currentState = state
+
+	if currentState == CardState.SELECTED_FOR_WIN and propagateUpdate:
+		emit_signal("select_for_win_updated", self, true)
+
+	elif currentState == CardState.SELECTED_FOR_REVEAL and propagateUpdate:
+		emit_signal("select_for_reveal_updated", self, true)
+
+	elif currentState == CardState.SELECTABLE and propagateUpdate:
+		if previousState == CardState.SELECTED_FOR_WIN:
+			emit_signal("select_for_win_updated", self, false)
+
+		elif previousState == CardState.SELECTED_FOR_REVEAL:
+			emit_signal("select_for_reveal_updated", self, false)
 
 func render_selected_state():
-	if isSelectedForWin:
+	if currentState == CardState.REVEALED_AS_PAIR:
 		sprite.modulate = Color("#B44E39")
+		touchInputDetector.disable()
 
-	elif isSelectedForReveal:
+	elif currentState == CardState.BLOCKED_FOR_SELECTION:
 		sprite.modulate = Color("#C7B074")
+		touchInputDetector.disable()
+
+	elif currentState == CardState.SELECTED_FOR_WIN:
+		sprite.modulate = Color("#EE8A44")
+		touchInputDetector.enable()
+		touchInputDetector.DRAG_ENABLED = true
+
+	elif currentState == CardState.SELECTED_FOR_REVEAL:
+		sprite.modulate = Color("#FAD758")
+		touchInputDetector.enable()
+		touchInputDetector.DRAG_ENABLED = false
 
 	else:
 		sprite.modulate = Color.white
+		touchInputDetector.enable()
+		touchInputDetector.DRAG_ENABLED = false
 
 func find_nearest_unoccupied_slot():
 	isLockedToSlot = false
@@ -153,16 +193,20 @@ func _on_TouchInputDetector_dragging(position):
 	set_z_index(2)
 
 func _on_TouchInputDetector_dragged():
+	print("DRAG - " + name + "(" + String(assignedType) + ")")
 	if isLockedToSlot:
 		targetSlot.deoccupy()
 		set_z_index(1)
 	find_nearest_unoccupied_slot()
-	print("DRAG - " + String(assignedType))
 
 func _on_TouchInputDetector_tapped():
-	set_selected_for_reveal(!isSelectedForReveal)
-	print("TAP - " + String(assignedType))
+	print("TAP - " + name + "(" + String(assignedType) + ")")
+	if currentState == CardState.SELECTED_FOR_WIN or currentState == CardState.SELECTED_FOR_REVEAL:
+		do_set_state(CardState.SELECTABLE, true)
+
+	else:
+		do_set_state(CardState.SELECTED_FOR_REVEAL, true)
 
 func _on_TouchInputDetector_long_pressed():
-	set_selected_for_win(!isSelectedForWin)
-	print("LONG_PRESS - " + String(assignedType))
+	print("LONG_PRESS - " + name + "(" + String(assignedType) + ")")
+	do_set_state(CardState.SELECTED_FOR_WIN, true)

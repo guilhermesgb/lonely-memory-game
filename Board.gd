@@ -14,6 +14,9 @@ onready var timer = $Timer
 var availableSlotsCounter = 0
 var occupiedSlotsCounter = 0
 
+var cardsSelectedForReveal = []
+var cardSelectedForWin = null
+
 func _ready():
 	rng.randomize()
 	occupy_excess_slots()
@@ -49,6 +52,8 @@ func free_excess_cards():
 		card.destroy()
 
 	for card in cardsToSetup:
+		card.connect("select_for_reveal_updated", self, "_on_card_select_for_reveal_updated")
+		card.connect("select_for_win_updated", self, "_on_card_select_for_win_updated")
 		card.setup(self, rng)
 
 	cards = cardsToSetup
@@ -105,3 +110,94 @@ func find_unassigned_card():
 		unassignedCards.append(card)
 
 	return unassignedCards[rng.randi_range(0, unassignedCards.size() - 1)]
+
+func _on_card_select_for_reveal_updated(card, selected):
+	clear_selected_cards_for_win()
+
+	var selection = update_selected_cards_for_reveal(card, selected)
+
+	if (has_enough_cards_to_reveal(selection)):
+		if revealed_cards_form_pair(selection):
+			block_revealed_cards(selection)
+
+		else:
+			block_selected_cards(selection)
+
+		clear_selected_cards_for_reveal()
+
+		var remainingCards = get_remaining_selectable_cards()
+		if singled_out_some_card(remainingCards):
+			if not unblock_cards_for_selection():
+				win_with_remaining_card(remainingCards[0])
+
+func update_selected_cards_for_reveal(card, selected):
+	if selected:
+		cardsSelectedForReveal.append(card)
+
+	elif card in cardsSelectedForReveal:
+		cardsSelectedForReveal.remove(cardsSelectedForReveal.find(card))
+
+	return cardsSelectedForReveal
+
+func has_enough_cards_to_reveal(selection):
+	return selection.size() == 2
+
+func revealed_cards_form_pair(selection):
+	return selection[0].get_assigned_type() == selection[1].get_assigned_type()
+
+func block_revealed_cards(selection):
+	for card in selection:
+		card.set_revealed_as_pair()
+
+func block_selected_cards(selection):
+	for card in selection:
+		card.set_blocked_for_selection()
+
+func clear_selected_cards_for_reveal():
+	cardsSelectedForReveal.clear()
+
+	for card in cards:
+		if card.is_selected_for_reveal():
+			card.set_as_selectable(false)
+
+func get_remaining_selectable_cards():
+	var selectableCards = []
+
+	for card in cards:
+		if card.is_blocked_for_selection() or card.is_revealed_as_pair():
+			continue
+
+		selectableCards.append(card)
+
+	return selectableCards
+
+func singled_out_some_card(remainingCards):
+	return remainingCards.size() == 1
+
+func unblock_cards_for_selection():
+	var thereWereCardsToUnblock = false
+
+	for card in cards:
+		if card.is_blocked_for_selection() or card.is_selected_for_win():
+			card.set_as_selectable(false)
+			thereWereCardsToUnblock = true
+
+	return thereWereCardsToUnblock
+
+func win_with_remaining_card(card):
+	card.set_selected_for_win(true)
+
+func _on_card_select_for_win_updated(card, selected):
+	clear_selected_cards_for_reveal()
+
+	for cardIndex in cards.size():
+		if card.name == cards[cardIndex].name:
+			continue
+
+		elif selected and cards[cardIndex].is_selected_for_win():
+			cards[cardIndex].set_as_selectable()
+
+func clear_selected_cards_for_win():
+	for card in cards:
+		if card.is_selected_for_win():
+			card.set_as_selectable(false)
