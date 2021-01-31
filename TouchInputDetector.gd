@@ -12,8 +12,6 @@ signal long_pressed
 signal dragging(position)
 signal dragged
 
-export(bool) var DRAG_ENABLED = true
-
 onready var longPressTimer = $LongPressTimer
 
 var startedTouchPress = false
@@ -25,6 +23,7 @@ var currentPosition = Vector2()
 var deltaPosition = Vector2()
 
 var isEnabled = false
+var isDragEnabled = false
 var user
 
 func setup(touchInputUser):
@@ -32,9 +31,11 @@ func setup(touchInputUser):
 
 func disable():
 	isEnabled = false
+	isDragEnabled = false
 
-func enable():
+func enable(withDragEnabled):
 	isEnabled = true
+	isDragEnabled = withDragEnabled
 
 func is_detecting_touch():
 	return isEnabled and (startedTouchPress or isStillTouchPressing or isPerformingDragging)
@@ -50,7 +51,7 @@ func _input(event):
 	if not startedTouchPress:
 		return
 
-	elif event is InputEventScreenDrag and DRAG_ENABLED:
+	elif event is InputEventScreenDrag and isDragEnabled:
 		isPerformingDragging = true
 		touchType = TouchType.DRAG
 		var updatedPosition = Vector2(

@@ -51,8 +51,7 @@ func destroy():
 	queue_free()
 
 func _on_preparation_done():
-	touchInputDetector.enable()
-	touchInputDetector.DRAG_ENABLED = false
+	touchInputDetector.enable(false)
 
 func has_assigned_type():
 	return assignedType != Global.CardType.NONE
@@ -121,23 +120,19 @@ func render_selected_state():
 
 	elif currentState == CardState.SELECTED_FOR_WIN:
 		sprite.modulate = Color("#EE8A44")
-		touchInputDetector.enable()
-		touchInputDetector.DRAG_ENABLED = true
+		touchInputDetector.enable(true)
 
 	elif currentState == CardState.LOCKED_FOR_WIN:
 		sprite.modulate = Color("#EE8A44")
-		touchInputDetector.enable()
-		touchInputDetector.DRAG_ENABLED = true
+		touchInputDetector.enable(true)
 
 	elif currentState == CardState.SELECTED_FOR_REVEAL:
 		sprite.modulate = Color("#FAD758")
-		touchInputDetector.enable()
-		touchInputDetector.DRAG_ENABLED = false
+		touchInputDetector.enable(false)
 
 	else:
 		sprite.modulate = Color.white
-		touchInputDetector.enable()
-		touchInputDetector.DRAG_ENABLED = false
+		touchInputDetector.enable(false)
 
 func find_nearest_unoccupied_slot():
 	isLockedToSlot = false

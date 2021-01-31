@@ -195,7 +195,7 @@ func _on_card_select_for_win_updated(card, selected):
 			continue
 
 		elif selected and cards[cardIndex].is_selected_for_win():
-			cards[cardIndex].set_as_selectable()
+			cards[cardIndex].set_as_selectable(false)
 
 func clear_selected_cards_for_win():
 	for card in cards:
