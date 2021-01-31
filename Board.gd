@@ -19,7 +19,10 @@ var cardsSelectedForReveal = []
 var cardSelectedForWin = null
 
 var earnablePoints = 0
-var earnedPeeks = 0
+
+var successiveNoPairRevealsCount = 0
+var earnedPeeksCount = 0
+
 var fullPassesCount = 0
 
 func _ready():
@@ -30,7 +33,10 @@ func _ready():
 	free_excess_cards()
 
 func calculate_earnable_points():
-	earnablePoints = 50 * CURRENT_LEVEL
+	earnablePoints = get_total_earnable_points()
+
+func get_total_earnable_points():
+	return 50 * CURRENT_LEVEL
 
 func occupy_excess_slots():
 	for slot in slots:
@@ -63,6 +69,7 @@ func free_excess_cards():
 	for card in cardsToSetup:
 		card.connect("select_for_reveal_updated", self, "_on_card_select_for_reveal_updated")
 		card.connect("select_for_win_updated", self, "_on_card_select_for_win_updated")
+		card.connect("tapped_while_blocked", self, "_on_card_tapped_while_blocked")
 		card.setup(self, rng)
 
 	cards = cardsToSetup
@@ -72,7 +79,7 @@ func _on_Timer_timeout():
 	get_tree().reload_current_scene()
 
 func _draw():
-	draw_circle(Vector2.ZERO, 2000, Color("#56445d"))
+	draw_circle(Vector2.ZERO, 2000, Color("#493e3e"))
 
 func _on_slot_occupied():
 	occupiedSlotsCounter = occupiedSlotsCounter + 1
@@ -142,6 +149,8 @@ func _on_card_select_for_reveal_updated(card, selected):
 			if not unblock_cards_for_selection():
 				win_with_remaining_card(remainingCards[0])
 
+	print("current state: charger=> " + String(successiveNoPairRevealsCount) + ", earned peeks=> " + String(earnedPeeksCount))
+
 func update_selected_cards_for_reveal(card, selected):
 	if selected:
 		cardsSelectedForReveal.append(card)
@@ -161,9 +170,18 @@ func block_revealed_cards(selection):
 	for card in selection:
 		card.set_revealed_as_pair()
 
+	successiveNoPairRevealsCount = 0
+
 func block_selected_cards(selection):
 	for card in selection:
 		card.set_blocked_for_selection()
+
+	successiveNoPairRevealsCount = successiveNoPairRevealsCount + 1
+
+	var existingPairsCount = (cards.size() - 1) / 2.0
+	if successiveNoPairRevealsCount == ceil(existingPairsCount / 2) and earnedPeeksCount < 3:
+		successiveNoPairRevealsCount = 0
+		earnedPeeksCount = earnedPeeksCount + 1
 
 func clear_selected_cards_for_reveal():
 	cardsSelectedForReveal.clear()
@@ -195,6 +213,7 @@ func unblock_cards_for_selection():
 			thereWereCardsToUnblock = true
 
 			fullPassesCount = fullPassesCount + 1
+			successiveNoPairRevealsCount = 0
 
 	return thereWereCardsToUnblock
 
@@ -211,13 +230,20 @@ func _on_card_select_for_win_updated(card, selected):
 		elif selected and cards[cardIndex].is_selected_for_win():
 			cards[cardIndex].set_as_selectable(false)
 
+	print("x current state: charger=> " + String(successiveNoPairRevealsCount) + ", earned peeks=> " + String(earnedPeeksCount))
+
 func clear_selected_cards_for_win():
 	for card in cards:
 		if card.is_selected_for_win():
 			card.set_as_selectable(false)
 
 func punish_by_decreasing_earnable_points():
-	var totalEarnablePoints = 50 * CURRENT_LEVEL
+	var totalEarnablePoints = get_total_earnable_points()
 
 	earnablePoints = earnablePoints - (floor(totalEarnablePoints / cards.size()) * 2)
 	emit_signal("earnable_points_updated", earnablePoints)
+
+func _on_card_tapped_while_blocked(card):
+	if earnedPeeksCount > 0:
+		print("peeking at blocked card " + card.name)
+		earnedPeeksCount = earnedPeeksCount - 1

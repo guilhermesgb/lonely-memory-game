@@ -14,6 +14,7 @@ enum CardState {
 signal card_destroyed(name)
 signal select_for_reveal_updated(card, selected)
 signal select_for_win_updated(card, selected)
+signal tapped_while_blocked(card)
 
 onready var noise = OpenSimplexNoise.new()
 
@@ -116,7 +117,7 @@ func render_selected_state():
 
 	elif currentState == CardState.BLOCKED_FOR_SELECTION:
 		sprite.modulate = Color("#C7B074")
-		touchInputDetector.disable()
+		touchInputDetector.enable(false)
 
 	elif currentState == CardState.SELECTED_FOR_WIN:
 		sprite.modulate = Color("#EE8A44")
@@ -183,7 +184,7 @@ func _physics_process(delta):
 	if targetSlot == null:
 		return
 
-	set_position(lerp(global_position, targetSlot.global_position, rng.randf_range(0.8, 16) * delta))
+	set_position(lerp(global_position, targetSlot.global_position, rng.randf_range(6, 8) * delta))
 	set_rotation(lerp_angle(rotation, 0, rng.randf_range(0.8, 8) * delta))
 
 	if is_close_enough_to_target_slot():
@@ -197,20 +198,24 @@ func _on_TouchInputDetector_dragging(position):
 	set_z_index(2)
 
 func _on_TouchInputDetector_dragged():
-	print("DRAG - " + name + "(" + String(assignedType) + ")")
 	if isLockedToSlot:
 		targetSlot.deoccupy()
 		set_z_index(1)
 	find_nearest_unoccupied_slot()
 
 func _on_TouchInputDetector_tapped():
-	print("TAP - " + name + "(" + String(assignedType) + ")")
-	if currentState == CardState.SELECTED_FOR_WIN or currentState == CardState.SELECTED_FOR_REVEAL:
+	if currentState == CardState.BLOCKED_FOR_SELECTION:
+		emit_signal("tapped_while_blocked", self)
+
+	elif currentState == CardState.SELECTED_FOR_WIN or currentState == CardState.SELECTED_FOR_REVEAL:
 		do_set_state(CardState.SELECTABLE, true)
 
 	elif currentState == CardState.SELECTABLE:
 		do_set_state(CardState.SELECTED_FOR_REVEAL, true)
 
 func _on_TouchInputDetector_long_pressed():
-	print("LONG_PRESS - " + name + "(" + String(assignedType) + ")")
+	if currentState == CardState.BLOCKED_FOR_SELECTION:
+		emit_signal("tapped_while_blocked", self)
+		return
+
 	do_set_state(CardState.SELECTED_FOR_WIN, true)
