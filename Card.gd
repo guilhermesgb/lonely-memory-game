@@ -7,6 +7,7 @@ enum CardState {
 	SELECTED_FOR_REVEAL,
 	SELECTED_FOR_WIN,
 	BLOCKED_FOR_SELECTION,
+	BLOCKED_SELECTED_FOR_WIN,
 	REVEALED_AS_PAIR,
 	LOCKED_FOR_WIN
 }
@@ -20,19 +21,23 @@ onready var noise = OpenSimplexNoise.new()
 
 onready var sprite = $Sprite
 onready var touchInputDetector = $Sprite/TouchInputDetector
-onready var slots = get_tree().get_nodes_in_group("slots")
-onready var cards = get_tree().get_nodes_in_group("cards")
+onready var animationPlayer = $AnimationPlayer
+onready var debugInfo = $DebugContainer/DebugInfo
+
+var rng
 
 var targetSlot
-var isLockedToSlot
+var isLockedToSlot = false
+var canLockToWinSlot = false
 
 var assignedType = Global.CardType.NONE
 
 var currentState = CardState.SELECTABLE
 
-var rng
+var board
 
-func setup(board, randomNumberGenerator):
+func setup(gameBoard, randomNumberGenerator):
+	board = gameBoard
 	rng = randomNumberGenerator
 	noise.seed = randi()
 	noise.octaves = 4
@@ -40,9 +45,6 @@ func setup(board, randomNumberGenerator):
 	noise.persistence = 0.8
 
 	board.connect("preparation_done", self, "_on_preparation_done")
-
-	for card in cards:
-		card.connect("card_destroyed", self, "_on_card_destroyed")
 
 	touchInputDetector.setup(self)
 	touchInputDetector.disable()
@@ -53,6 +55,7 @@ func destroy():
 
 func _on_preparation_done():
 	touchInputDetector.enable(false)
+	canLockToWinSlot = true
 
 func has_assigned_type():
 	return assignedType != Global.CardType.NONE
@@ -70,7 +73,7 @@ func is_selected_for_reveal():
 	return currentState == CardState.SELECTED_FOR_REVEAL
 
 func is_selected_for_win():
-	return currentState == CardState.SELECTED_FOR_WIN or currentState == CardState.LOCKED_FOR_WIN
+	return currentState == CardState.SELECTED_FOR_WIN or currentState == CardState.LOCKED_FOR_WIN or currentState == CardState.BLOCKED_SELECTED_FOR_WIN
 
 func set_selected_for_win(propagateUpdate):
 	do_set_state(CardState.SELECTED_FOR_WIN, propagateUpdate)
@@ -79,10 +82,13 @@ func set_locked_for_win(propagateUpdate):
 	do_set_state(CardState.LOCKED_FOR_WIN, propagateUpdate)
 
 func is_blocked_for_selection():
-	return currentState == CardState.BLOCKED_FOR_SELECTION
+	return currentState == CardState.BLOCKED_FOR_SELECTION or currentState == CardState.BLOCKED_SELECTED_FOR_WIN
 
-func set_blocked_for_selection():
+func set_blocked_for_selection(playAnimation):
 	set_state(CardState.BLOCKED_FOR_SELECTION)
+
+	if playAnimation:
+		animationPlayer.play("FlipBackToFront")
 
 func is_revealed_as_pair():
 	return currentState == CardState.REVEALED_AS_PAIR
@@ -97,14 +103,14 @@ func do_set_state(state, propagateUpdate):
 	var previousState = currentState
 	currentState = state
 
-	if currentState == CardState.SELECTED_FOR_WIN or currentState == CardState.LOCKED_FOR_WIN and propagateUpdate:
+	if currentState == CardState.SELECTED_FOR_WIN or currentState == CardState.BLOCKED_SELECTED_FOR_WIN or currentState == CardState.LOCKED_FOR_WIN and propagateUpdate:
 		emit_signal("select_for_win_updated", self, true)
 
 	elif currentState == CardState.SELECTED_FOR_REVEAL and propagateUpdate:
 		emit_signal("select_for_reveal_updated", self, true)
 
 	elif currentState == CardState.SELECTABLE and propagateUpdate:
-		if previousState == CardState.SELECTED_FOR_WIN or previousState == CardState.LOCKED_FOR_WIN:
+		if previousState == CardState.SELECTED_FOR_WIN or previousState == CardState.BLOCKED_SELECTED_FOR_WIN or previousState == CardState.LOCKED_FOR_WIN:
 			emit_signal("select_for_win_updated", self, false)
 
 		elif previousState == CardState.SELECTED_FOR_REVEAL:
@@ -114,31 +120,41 @@ func render_selected_state():
 	if currentState == CardState.REVEALED_AS_PAIR:
 		sprite.modulate = Color("#B44E39")
 		touchInputDetector.disable()
+		debugInfo.text = String(assignedType)
+		debugInfo.modulate = Color.white
 
 	elif currentState == CardState.BLOCKED_FOR_SELECTION:
 		sprite.modulate = Color("#C7B074")
 		touchInputDetector.enable(false)
+		debugInfo.text = String(assignedType)
+		debugInfo.modulate = Color.transparent
 
-	elif currentState == CardState.SELECTED_FOR_WIN:
+	elif currentState == CardState.SELECTED_FOR_WIN or currentState == CardState.BLOCKED_SELECTED_FOR_WIN or currentState == CardState.LOCKED_FOR_WIN:
 		sprite.modulate = Color("#EE8A44")
 		touchInputDetector.enable(true)
-
-	elif currentState == CardState.LOCKED_FOR_WIN:
-		sprite.modulate = Color("#EE8A44")
-		touchInputDetector.enable(true)
+		debugInfo.text = String(assignedType)
+		debugInfo.modulate = Color.transparent
 
 	elif currentState == CardState.SELECTED_FOR_REVEAL:
 		sprite.modulate = Color("#FAD758")
 		touchInputDetector.enable(false)
+		debugInfo.text = String(assignedType)
+		debugInfo.modulate = Color.transparent
 
 	else:
 		sprite.modulate = Color.white
 		touchInputDetector.enable(false)
+		debugInfo.text = String(assignedType)
+		debugInfo.modulate = Color.transparent
 
 func find_nearest_unoccupied_slot():
 	isLockedToSlot = false
 	targetSlot = null
 	var shortestDistance = 1000000000
+
+	var slots = board.get_card_slots()
+	if canLockToWinSlot:
+		slots.append(board.get_win_slot())
 
 	for slot in slots:
 		if slot.is_occupied():
@@ -163,12 +179,9 @@ func is_close_enough_to_target_slot():
 func lock_to_unoccupied_slot():
 	if not targetSlot.is_occupied():
 		isLockedToSlot = true
-		targetSlot.occupy()
+		targetSlot.occupy(self)
 		set_z_index(0)
 		print("LOCK")
-
-func _on_card_destroyed(_name):
-	cards = get_tree().get_nodes_in_group("cards")
 
 func _physics_process(delta):
 	if is_queued_for_deletion():
@@ -207,6 +220,9 @@ func _on_TouchInputDetector_tapped():
 	if currentState == CardState.BLOCKED_FOR_SELECTION:
 		emit_signal("tapped_while_blocked", self)
 
+	elif currentState == CardState.BLOCKED_SELECTED_FOR_WIN:
+		do_set_state(CardState.BLOCKED_FOR_SELECTION, true)
+
 	elif currentState == CardState.SELECTED_FOR_WIN or currentState == CardState.SELECTED_FOR_REVEAL:
 		do_set_state(CardState.SELECTABLE, true)
 
@@ -215,7 +231,7 @@ func _on_TouchInputDetector_tapped():
 
 func _on_TouchInputDetector_long_pressed():
 	if currentState == CardState.BLOCKED_FOR_SELECTION:
-		emit_signal("tapped_while_blocked", self)
+		do_set_state(CardState.BLOCKED_SELECTED_FOR_WIN, true)
 		return
 
 	do_set_state(CardState.SELECTED_FOR_WIN, true)

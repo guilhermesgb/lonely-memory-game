@@ -7,7 +7,6 @@
 
 [node name="Board" type="Node2D"]
 script = ExtResource( 2 )
-CURRENT_LEVEL = 5
 
 [node name="Sprite" type="Sprite" parent="."]
 texture = ExtResource( 4 )
@@ -215,6 +214,9 @@ position = Vector2( -203.744, 183.264 )
 
 [node name="Card29" parent="." instance=ExtResource( 1 )]
 position = Vector2( 590.876, -120 )
+
+[node name="WinSlot" parent="." instance=ExtResource( 3 )]
+position = Vector2( 559.668, 158.057 )
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 100.0

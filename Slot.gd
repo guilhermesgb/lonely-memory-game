@@ -1,6 +1,6 @@
 extends Position2D
 
-signal slot_occupied
+signal slot_occupied(card)
 
 export(int) var MIN_LEVEL = 0
 
@@ -14,10 +14,10 @@ func setup(current_level):
 		deoccupy()
 
 	else:
-		occupy()
+		occupy(null)
 
-func occupy():
-	emit_signal("slot_occupied")
+func occupy(card):
+	emit_signal("slot_occupied", card)
 #	modulate = Color("#8a5939")
 	isOccupied = true
 
