@@ -8,7 +8,6 @@ signal player_won(points)
 signal player_lost()
 
 onready var rng = RandomNumberGenerator.new()
-onready var timer = $Timer
 
 var currentLevel = 0
 
@@ -166,7 +165,6 @@ func _on_slot_occupied(_card):
 		assign_types_to_cards()
 		emit_signal("preparation_done")
 		emit_signal("earnable_points_updated", earnablePoints)
-		timer.start()
 
 func prepare_win_slot():
 	get_win_slot().connect("slot_occupied", self, "_on_win_slot_occupied")
@@ -293,11 +291,13 @@ func unblock_cards_for_selection(cards):
 
 	for card in cards:
 		if card.is_blocked_for_selection() or card.is_selected_for_win():
+
 			card.set_as_selectable(false)
 			thereWereCardsToUnblock = true
 
-			fullPassesCount = fullPassesCount + 1
-			successiveNoPairRevealsCount = 0
+	if thereWereCardsToUnblock:
+		fullPassesCount = fullPassesCount + 1
+		successiveNoPairRevealsCount = 0
 
 	return thereWereCardsToUnblock
 
@@ -343,7 +343,15 @@ func _on_card_tapped_while_blocked(card):
 
 func _on_win_slot_occupied(card):
 	if cardSelectedForWin != null and card.name == cardSelectedForWin.name:
+		for otherCard in get_cards():
+			if (otherCard.name == card.name):
+				continue
+
+			otherCard.set_revealed_as_pair()
+
+		card.set_winner_found()
 		emit_signal("player_won", earnablePoints)
 
 	else:
+		card.set_revealed_as_pair()
 		emit_signal("player_lost")

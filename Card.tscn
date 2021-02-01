@@ -94,7 +94,7 @@ tracks/3/loop_wrap = true
 tracks/3/imported = false
 tracks/3/enabled = true
 tracks/3/keys = {
-"times": PoolRealArray( 0, 1.6 ),
+"times": PoolRealArray( 0, 0.5 ),
 "transitions": PoolRealArray( 1, 1 ),
 "update": 1,
 "values": [ false, true ]
@@ -130,7 +130,7 @@ tracks/6/loop_wrap = true
 tracks/6/imported = false
 tracks/6/enabled = true
 tracks/6/keys = {
-"times": PoolRealArray( 0, 0.6, 1.5 ),
+"times": PoolRealArray( 0, 0.5, 1.6 ),
 "transitions": PoolRealArray( 1, 1, 4.59479 ),
 "update": 0,
 "values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
@@ -145,7 +145,7 @@ tracks/7/keys = {
 "times": PoolRealArray( 0.5, 1.6 ),
 "transitions": PoolRealArray( 1, 1 ),
 "update": 0,
-"values": [ Color( 1, 1, 1, 1 ), Color( 0.705882, 0.305882, 0.223529, 1 ) ]
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
 }
 
 [sub_resource type="Animation" id=3]
@@ -233,7 +233,7 @@ tracks/6/keys = {
 "times": PoolRealArray( 0, 0.6, 1.5, 3.7, 4.6 ),
 "transitions": PoolRealArray( 1, 1, 4.59479, 1, 1 ),
 "update": 0,
-"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0 ), Color( 0.780392, 0.690196, 0.454902, 1 ) ]
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
 }
 tracks/7/type = "value"
 tracks/7/path = NodePath("FlipFrontToBack:modulate")
@@ -282,12 +282,14 @@ frame = 8
 
 [node name="FlipBackToFront" type="Sprite" parent="."]
 visible = false
+modulate = Color( 1, 1, 1, 0 )
 texture = ExtResource( 6 )
 hframes = 16
+frame = 15
 
 [node name="FlipFrontToBack" type="Sprite" parent="."]
 visible = false
-modulate = Color( 0.705882, 0.305882, 0.223529, 1 )
+modulate = Color( 1, 1, 1, 0 )
 texture = ExtResource( 7 )
 hframes = 16
 

@@ -9,7 +9,8 @@ enum CardState {
 	BLOCKED_FOR_SELECTION,
 	BLOCKED_SELECTED_FOR_WIN,
 	REVEALED_AS_PAIR,
-	LOCKED_FOR_WIN
+	LOCKED_FOR_WIN,
+	WINNER_FOUND
 }
 
 signal card_destroyed(name)
@@ -98,7 +99,6 @@ func set_blocked_for_selection(playAnimation):
 
 	if playAnimation:
 		animationPlayer.play("RevealTemporarily")
-
 	sprite.set_texture(textureBack)
 
 func is_revealed_as_pair():
@@ -107,6 +107,13 @@ func is_revealed_as_pair():
 func set_revealed_as_pair():
 	set_state(CardState.REVEALED_AS_PAIR)
 
+	animationPlayer.play("RevealForever")
+	sprite.set_texture(textureFront)
+
+func set_winner_found():
+	set_state(CardState.WINNER_FOUND)
+
+	animationPlayer.play("RevealForever")
 	sprite.set_texture(textureFront)
 
 func set_state(state):
@@ -130,7 +137,13 @@ func do_set_state(state, propagateUpdate):
 			emit_signal("select_for_reveal_updated", self, false)
 
 func render_selected_state():
-	if currentState == CardState.REVEALED_AS_PAIR:
+	if currentState == CardState.WINNER_FOUND:
+		apply_tint(Color("#FAD758"))
+		touchInputDetector.disable()
+		debugInfo.text = String(assignedType)
+		debugInfo.modulate = Color.white
+
+	elif currentState == CardState.REVEALED_AS_PAIR:
 		apply_tint(Color("#B44E39"))
 		touchInputDetector.disable()
 		debugInfo.text = String(assignedType)
@@ -197,7 +210,9 @@ func lock_to_unoccupied_slot():
 		isLockedToSlot = true
 		targetSlot.occupy(self)
 		set_z_index(0)
-		animationPlayer.play("Dust")
+
+		if not targetSlot.name == "WinSlot":
+			animationPlayer.play("Dust")
 
 func _physics_process(delta):
 	if is_queued_for_deletion():

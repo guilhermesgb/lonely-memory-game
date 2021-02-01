@@ -99,3 +99,15 @@ text = "LEVEL 1"
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 8.0
+one_shot = true
+
+[node name="BoardContainer" type="CenterContainer" parent="."]
+margin_right = 640.0
+margin_bottom = 360.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

@@ -15,7 +15,7 @@ func setup_level():
 	var board = boardScene.instance()
 	board.setup(CURRENT_LEVEL)
 	board.z_index = -1
-	add_child(board, true)
+	$BoardContainer.add_child(board, true)
 
 	board.connect("earnable_points_updated", self, "_on_earnable_points_updated")
 	board.connect("player_won", self, "_on_player_beat_level")
@@ -23,10 +23,6 @@ func setup_level():
 
 	levelCount.text = "Level " + String(CURRENT_LEVEL)
 	earnablePoints.text = String(board.get_total_earnable_points())
-
-func advance_level(points):
-	CURRENT_LEVEL = CURRENT_LEVEL + 1
-	totalScore.text = String(int(totalScore.text) + points)
 
 func destroy_level():
 	for childIndex in get_child_count():
@@ -36,15 +32,21 @@ func destroy_level():
 			child.queue_free()
 			break
 
+func advance_level(points):
+	CURRENT_LEVEL = CURRENT_LEVEL + 1
+	totalScore.text = String(int(totalScore.text) + points)
+
 func _on_earnable_points_updated(points):
 	earnablePoints.text = String(points)
 
 func _on_player_beat_level(points):
-	destroy_level()
 	advance_level(points)
-	setup_level()
+	$Timer.start()
 	pass
 
 func _on_player_lost_level():
 	pass
 
+func _on_Timer_timeout():
+	destroy_level()
+	setup_level()
