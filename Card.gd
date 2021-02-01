@@ -181,7 +181,7 @@ func lock_to_unoccupied_slot():
 		isLockedToSlot = true
 		targetSlot.occupy(self)
 		set_z_index(0)
-		print("LOCK")
+		animationPlayer.play("Dust")
 
 func _physics_process(delta):
 	if is_queued_for_deletion():
