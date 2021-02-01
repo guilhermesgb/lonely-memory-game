@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://archive-regular.ttf" type="DynamicFontData" id=2]
 [ext_resource path="res://Game.gd" type="Script" id=3]
@@ -17,8 +17,111 @@ font_data = ExtResource( 2 )
 size = 18
 font_data = ExtResource( 2 )
 
+[sub_resource type="Animation" id=6]
+resource_name = "HideResult"
+tracks/0/type = "value"
+tracks/0/path = NodePath("LevelResultContainer/VBoxContainer:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 0.120742, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0.862745 ), Color( 1, 1, 1, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("LevelResultContainer/VBoxContainer:rect_position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 1, 0.241484 ),
+"update": 0,
+"values": [ Vector2( 207, 148 ), Vector2( 207, 250 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("BlackOverlay:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 1, 0.0743255 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+
+[sub_resource type="Animation" id=5]
+resource_name = "ShowResult"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("LevelResultContainer/VBoxContainer:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 2 ),
+"transitions": PoolRealArray( 1, 0.574349 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0.862745 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("LevelResultContainer/VBoxContainer:rect_position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 2 ),
+"transitions": PoolRealArray( 0.241484, 1 ),
+"update": 0,
+"values": [ Vector2( 207, 250 ), Vector2( 207, 148 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("BlackOverlay:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 2 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
+
+[sub_resource type="DynamicFont" id=4]
+size = 32
+outline_size = 1
+outline_color = Color( 0.34902, 0.301961, 0.301961, 1 )
+font_data = ExtResource( 2 )
+
 [node name="Game" type="Node2D"]
 script = ExtResource( 3 )
+
+[node name="BoardContainer" type="CenterContainer" parent="."]
+margin_right = 640.0
+margin_bottom = 360.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BlackOverlay" type="ColorRect" parent="."]
+modulate = Color( 1, 1, 1, 0 )
+margin_left = 22.0
+margin_top = 23.0
+margin_right = 493.0
+margin_bottom = 339.0
+color = Color( 0, 0, 0, 0.627451 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="GuidelineRight" type="Position2D" parent="."]
 position = Vector2( 558.851, 0 )
@@ -100,14 +203,61 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Timer" type="Timer" parent="."]
-wait_time = 8.0
+[node name="NextLevelTimer" type="Timer" parent="."]
+wait_time = 4.0
 one_shot = true
 
-[node name="BoardContainer" type="CenterContainer" parent="."]
-margin_right = 640.0
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/HideResult = SubResource( 6 )
+anims/ShowResult = SubResource( 5 )
+
+[node name="LevelResultContainer" type="CenterContainer" parent="."]
+margin_right = 641.0
 margin_bottom = 360.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
-[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]
+
+[node name="VBoxContainer" type="VBoxContainer" parent="LevelResultContainer"]
+modulate = Color( 1, 1, 1, 0 )
+margin_left = 207.0
+margin_top = 250.0
+margin_right = 391.0
+margin_bottom = 402.001
+alignment = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="GameOver" type="Label" parent="LevelResultContainer/VBoxContainer"]
+margin_right = 184.0
+margin_bottom = 40.0
+custom_fonts/font = SubResource( 4 )
+text = "Game Over"
+
+[node name="KeepItUp" type="Label" parent="LevelResultContainer/VBoxContainer"]
+margin_top = 44.0
+margin_right = 184.0
+margin_bottom = 84.0
+custom_fonts/font = SubResource( 4 )
+text = "Keep it up!"
+
+[node name="GoodLuck" type="Label" parent="LevelResultContainer/VBoxContainer"]
+margin_top = 88.0
+margin_right = 184.0
+margin_bottom = 128.0
+custom_fonts/font = SubResource( 4 )
+text = "Good Luck!"
+
+[node name="RetryButton" type="Button" parent="LevelResultContainer/VBoxContainer"]
+margin_top = 132.0
+margin_right = 184.0
+margin_bottom = 152.0
+text = "Try Again"
+
+[node name="BeginGameTimer" type="Timer" parent="."]
+wait_time = 3.0
+one_shot = true
+[connection signal="timeout" from="NextLevelTimer" to="." method="_on_NextLevelTimer_timeout"]
+[connection signal="pressed" from="LevelResultContainer/VBoxContainer/RetryButton" to="." method="_on_RetryButton_pressed"]
+[connection signal="timeout" from="BeginGameTimer" to="." method="_on_BeginGameTimer_timeout"]
