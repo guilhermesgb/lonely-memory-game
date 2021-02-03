@@ -5,6 +5,7 @@ const boardScene = preload("Board.tscn")
 export(int) var CURRENT_LEVEL = 1
 
 onready var levelCount = $GuidelineRight/LevelContainer/LevelLabel
+onready var peeksCount = $GuidelineRight/CenterContainer/ItemsPanel/PeeksContainer/PeeksCount
 onready var earnablePoints = $GuidelineRight/PointsLabel/PointsContainer/Points
 onready var totalScore = $GuidelineRight/TotalScoreLabel/TotalScoreContainer/TotalScore
 onready var goodLuck = $LevelResultContainer/VBoxContainer/GoodLuck
@@ -48,10 +49,11 @@ func setup_board():
 	boardContainer.add_child(board, true)
 
 	board.connect("earnable_points_updated", self, "_on_earnable_points_updated")
+	board.connect("peek_count_updated", self, "_on_peek_count_updated")
 	board.connect("player_won", self, "_on_player_beat_level")
 	board.connect("player_lost", self, "_on_player_lost_level")
 
-	levelCount.text = "Level " + String(CURRENT_LEVEL)
+	levelCount.text = "LEVEL " + String(CURRENT_LEVEL)
 	earnablePoints.text = String(board.get_total_earnable_points())
 
 func destroy_level():
@@ -68,6 +70,13 @@ func advance_level(points):
 
 func _on_earnable_points_updated(points):
 	earnablePoints.text = String(points)
+
+func _on_peek_count_updated(count):
+	if count >= 10:
+		peeksCount.text = "x" + String(count)
+
+	else:
+		peeksCount.text = "x0" + String(count)
 
 func _on_player_beat_level(points):
 	goodLuck.visible = false

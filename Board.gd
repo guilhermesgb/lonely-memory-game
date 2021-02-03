@@ -4,6 +4,7 @@ const Global = preload("Global.gd")
 
 signal preparation_done
 signal earnable_points_updated(points)
+signal peek_count_updated(count)
 signal player_won(points)
 signal player_lost()
 
@@ -165,6 +166,7 @@ func _on_slot_occupied(_card):
 		assign_types_to_cards()
 		emit_signal("preparation_done")
 		emit_signal("earnable_points_updated", earnablePoints)
+		emit_signal("peek_count_updated", earnedPeeksCount)
 
 func prepare_win_slot():
 	get_win_slot().connect("slot_occupied", self, "_on_win_slot_occupied")
@@ -231,8 +233,6 @@ func _on_card_select_for_reveal_updated(card, selected):
 			if not unblock_cards_for_selection(cards):
 				win_with_remaining_card(remainingCards[0])
 
-	print("current state: charger=> " + String(successiveNoPairRevealsCount) + ", earned peeks=> " + String(earnedPeeksCount))
-
 func update_selected_cards_for_reveal(card, selected):
 	if selected:
 		cardsSelectedForReveal.append(card)
@@ -264,6 +264,7 @@ func block_selected_cards(cards, selection):
 	if successiveNoPairRevealsCount == ceil(existingPairsCount / 2) and earnedPeeksCount < 3:
 		successiveNoPairRevealsCount = 0
 		earnedPeeksCount = earnedPeeksCount + 1
+		emit_signal("peek_count_updated", earnedPeeksCount)
 
 func clear_selected_cards_for_reveal(cards):
 	cardsSelectedForReveal.clear()
@@ -319,8 +320,6 @@ func _on_card_select_for_win_updated(card, selected):
 			else:
 				cards[cardIndex].set_as_selectable(false)
 
-	print("x current state: charger=> " + String(successiveNoPairRevealsCount) + ", earned peeks=> " + String(earnedPeeksCount))
-
 func clear_selected_cards_for_win(cards):
 	for card in cards:
 		if card.is_selected_for_win():
@@ -340,6 +339,7 @@ func _on_card_tapped_while_blocked(card):
 	if earnedPeeksCount > 0:
 		earnedPeeksCount = earnedPeeksCount - 1
 		card.set_blocked_for_selection(true)
+		emit_signal("peek_count_updated", earnedPeeksCount)
 
 func _on_win_slot_occupied(card):
 	if cardSelectedForWin != null and card.name == cardSelectedForWin.name:

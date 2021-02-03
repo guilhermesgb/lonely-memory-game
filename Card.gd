@@ -118,6 +118,7 @@ func set_blocked_for_selection(playAnimation):
 	set_state(CardState.BLOCKED_FOR_SELECTION)
 
 	if playAnimation:
+		animationPlayer.stop(true)
 		animationPlayer.play("RevealTemporarily")
 	plastic.set_texture(textureBack)
 
@@ -127,12 +128,14 @@ func is_revealed_as_pair():
 func set_revealed_as_pair():
 	set_state(CardState.REVEALED_AS_PAIR)
 
+	animationPlayer.stop(true)
 	animationPlayer.play("RevealForever")
 	plastic.set_texture(textureFront)
 
 func set_winner_found():
 	set_state(CardState.WINNER_FOUND)
 
+	animationPlayer.stop(true)
 	animationPlayer.play("RevealForever")
 	plastic.set_texture(textureFront)
 
