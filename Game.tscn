@@ -17,7 +17,7 @@ font_data = ExtResource( 2 )
 size = 18
 font_data = ExtResource( 2 )
 
-[sub_resource type="Animation" id=6]
+[sub_resource type="Animation" id=4]
 resource_name = "HideResult"
 tracks/0/type = "value"
 tracks/0/path = NodePath("LevelResultContainer/VBoxContainer:modulate")
@@ -96,7 +96,7 @@ tracks/2/keys = {
 "values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
 }
 
-[sub_resource type="DynamicFont" id=4]
+[sub_resource type="DynamicFont" id=6]
 size = 32
 outline_size = 1
 outline_color = Color( 0.34902, 0.301961, 0.301961, 1 )
@@ -208,7 +208,7 @@ wait_time = 4.0
 one_shot = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-anims/HideResult = SubResource( 6 )
+anims/HideResult = SubResource( 4 )
 anims/ShowResult = SubResource( 5 )
 
 [node name="LevelResultContainer" type="CenterContainer" parent="."]
@@ -220,10 +220,10 @@ __meta__ = {
 
 [node name="VBoxContainer" type="VBoxContainer" parent="LevelResultContainer"]
 modulate = Color( 1, 1, 1, 0 )
-margin_left = 207.0
-margin_top = 250.0
-margin_right = 391.0
-margin_bottom = 402.001
+margin_left = 228.0
+margin_top = 104.0
+margin_right = 412.0
+margin_bottom = 256.0
 alignment = 1
 __meta__ = {
 "_edit_use_anchors_": false
@@ -232,21 +232,21 @@ __meta__ = {
 [node name="GameOver" type="Label" parent="LevelResultContainer/VBoxContainer"]
 margin_right = 184.0
 margin_bottom = 40.0
-custom_fonts/font = SubResource( 4 )
+custom_fonts/font = SubResource( 6 )
 text = "Game Over"
 
 [node name="KeepItUp" type="Label" parent="LevelResultContainer/VBoxContainer"]
 margin_top = 44.0
 margin_right = 184.0
 margin_bottom = 84.0
-custom_fonts/font = SubResource( 4 )
+custom_fonts/font = SubResource( 6 )
 text = "Keep it up!"
 
 [node name="GoodLuck" type="Label" parent="LevelResultContainer/VBoxContainer"]
 margin_top = 88.0
 margin_right = 184.0
 margin_bottom = 128.0
-custom_fonts/font = SubResource( 4 )
+custom_fonts/font = SubResource( 6 )
 text = "Good Luck!"
 
 [node name="RetryButton" type="Button" parent="LevelResultContainer/VBoxContainer"]

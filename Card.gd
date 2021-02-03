@@ -1,6 +1,25 @@
 extends Node2D
 
 const Global = preload("Global.gd")
+const textureBack = preload("res://card_back.png")
+const textureFront = preload("res://card_front.png")
+const textureIcons = [
+	preload("res://card_icon_1.png"),
+	preload("res://card_icon_2.png"),
+	preload("res://card_icon_3.png"),
+	preload("res://card_icon_4.png"),
+	preload("res://card_icon_5.png"),
+	preload("res://card_icon_6.png"),
+	preload("res://card_icon_7.png"),
+	preload("res://card_icon_8.png"),
+	preload("res://card_icon_9.png"),
+	preload("res://card_icon_10.png"),
+	preload("res://card_icon_11.png"),
+	preload("res://card_icon_12.png"),
+	preload("res://card_icon_13.png"),
+	preload("res://card_icon_14.png"),
+	preload("res://card_icon_15.png")
+]
 
 enum CardState {
 	SELECTABLE,
@@ -20,13 +39,11 @@ signal tapped_while_blocked(card)
 
 onready var noise = OpenSimplexNoise.new()
 
-onready var sprite = $Sprite
-onready var touchInputDetector = $Sprite/TouchInputDetector
-onready var animationPlayer = $AnimationPlayer
-onready var debugInfo = $DebugContainer/DebugInfo
+onready var plastic = $Plastic
+onready var icon = $Icon
 
-var textureBack = preload("res://card_back.png")
-var textureFront = preload("res://card_front.png")
+onready var touchInputDetector = $Plastic/TouchInputDetector
+onready var animationPlayer = $AnimationPlayer
 
 var rng
 
@@ -70,10 +87,13 @@ func get_assigned_type():
 func set_assigned_type(typeToAssign):
 	assignedType = typeToAssign
 
+	if assignedType >= 1 and assignedType <= 15:
+		icon.set_texture(textureIcons[assignedType - 1])
+
 func set_as_selectable(propagateUpdate):
 	do_set_state(CardState.SELECTABLE, propagateUpdate)
 
-	sprite.set_texture(textureBack)
+	plastic.set_texture(textureBack)
 
 func is_selected_for_reveal():
 	return currentState == CardState.SELECTED_FOR_REVEAL
@@ -84,12 +104,12 @@ func is_selected_for_win():
 func set_selected_for_win(propagateUpdate):
 	do_set_state(CardState.SELECTED_FOR_WIN, propagateUpdate)
 
-	sprite.set_texture(textureBack)
+	plastic.set_texture(textureBack)
 
 func set_locked_for_win(propagateUpdate):
 	do_set_state(CardState.LOCKED_FOR_WIN, propagateUpdate)
 
-	sprite.set_texture(textureBack)
+	plastic.set_texture(textureBack)
 
 func is_blocked_for_selection():
 	return currentState == CardState.BLOCKED_FOR_SELECTION or currentState == CardState.BLOCKED_SELECTED_FOR_WIN
@@ -99,7 +119,7 @@ func set_blocked_for_selection(playAnimation):
 
 	if playAnimation:
 		animationPlayer.play("RevealTemporarily")
-	sprite.set_texture(textureBack)
+	plastic.set_texture(textureBack)
 
 func is_revealed_as_pair():
 	return currentState == CardState.REVEALED_AS_PAIR
@@ -108,13 +128,13 @@ func set_revealed_as_pair():
 	set_state(CardState.REVEALED_AS_PAIR)
 
 	animationPlayer.play("RevealForever")
-	sprite.set_texture(textureFront)
+	plastic.set_texture(textureFront)
 
 func set_winner_found():
 	set_state(CardState.WINNER_FOUND)
 
 	animationPlayer.play("RevealForever")
-	sprite.set_texture(textureFront)
+	plastic.set_texture(textureFront)
 
 func set_state(state):
 	do_set_state(state, false)
@@ -139,42 +159,36 @@ func do_set_state(state, propagateUpdate):
 func render_selected_state():
 	if currentState == CardState.WINNER_FOUND:
 		apply_tint(Color("#FAD758"))
+		icon.modulate = Color.white
 		touchInputDetector.disable()
-		debugInfo.text = String(assignedType)
-		debugInfo.modulate = Color.white
 
 	elif currentState == CardState.REVEALED_AS_PAIR:
 		apply_tint(Color("#B44E39"))
+		icon.modulate = Color.white
 		touchInputDetector.disable()
-		debugInfo.text = String(assignedType)
-		debugInfo.modulate = Color.white
 
 	elif currentState == CardState.BLOCKED_FOR_SELECTION:
 		apply_tint(Color("#C7B074"))
+		icon.modulate = Color.transparent
 		touchInputDetector.enable(false)
-		debugInfo.text = String(assignedType)
-		debugInfo.modulate = Color.transparent
 
 	elif currentState == CardState.SELECTED_FOR_WIN or currentState == CardState.BLOCKED_SELECTED_FOR_WIN or currentState == CardState.LOCKED_FOR_WIN:
 		apply_tint(Color("#EE8A44"))
+		icon.modulate = Color.transparent
 		touchInputDetector.enable(true)
-		debugInfo.text = String(assignedType)
-		debugInfo.modulate = Color.transparent
 
 	elif currentState == CardState.SELECTED_FOR_REVEAL:
 		apply_tint(Color("#FAD758"))
+		icon.modulate = Color.transparent
 		touchInputDetector.enable(false)
-		debugInfo.text = String(assignedType)
-		debugInfo.modulate = Color.transparent
 
 	else:
 		apply_tint(Color.white)
+		icon.modulate = Color.transparent
 		touchInputDetector.enable(false)
-		debugInfo.text = String(assignedType)
-		debugInfo.modulate = Color.transparent
 
 func apply_tint(color):
-	sprite.modulate = color
+	plastic.modulate = color
 
 func find_nearest_unoccupied_slot():
 	isLockedToSlot = false

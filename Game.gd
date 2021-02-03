@@ -1,5 +1,7 @@
 extends Node2D
 
+const boardScene = preload("Board.tscn")
+
 export(int) var CURRENT_LEVEL = 1
 
 onready var levelCount = $GuidelineRight/LevelContainer/LevelLabel
@@ -13,8 +15,6 @@ onready var beginGameTimer = $BeginGameTimer
 onready var animationPlayer = $AnimationPlayer
 onready var boardContainer = $BoardContainer
 onready var nextLevelTimer = $NextLevelTimer
-
-var boardScene = preload("Board.tscn")
 
 func _ready():
 	setup_level()
