@@ -8,7 +8,8 @@ signal peek_count_updated(count)
 signal player_won(points)
 signal player_lost()
 
-onready var rng = RandomNumberGenerator.new()
+var rng
+var boardId = null
 
 var currentLevel = 0
 
@@ -27,8 +28,22 @@ var earnedPeeksCount = 0
 
 var fullPassesCount = 0
 
-func setup(level):
+func setup(level, randomNumberGenerator):
 	currentLevel = level
+
+	rng = randomNumberGenerator
+	boardId = String(rng.randi_range(0, 3000)) + String(rng.randi_range(0, 3000))
+
+func destroy():
+	for slot in get_card_slots():
+		slot.queue_free()
+
+	for card in get_cards():
+		card.queue_free()
+
+	get_win_slot().queue_free()
+
+	queue_free()
 
 func _ready():
 	rng.randomize()
@@ -42,13 +57,16 @@ func group_slots(groupName):
 		var child = get_child(childIndex)
 
 		if child.name.begins_with("Slot"):
+			print ("adding " + child.name + " to group " + groupName)
 			child.add_to_group(groupName)
 
 func get_card_slots():
 	return do_get_card_slots(false)
 
 func do_get_card_slots(groupSlots):
-	var groupName = "slots" + String(currentLevel)
+	var groupName = "slots_" + String(boardId)
+
+	print ("getting card slots among " + groupName)
 
 	if groupSlots:
 		group_slots(groupName)
@@ -64,20 +82,29 @@ func do_get_card_slots(groupSlots):
 	return slots
 
 func get_win_slot():
-	return $WinSlot
+	for childIndex in get_child_count():
+		var child = get_child(childIndex)
+
+		if child.name == "WinSlot":
+			return child
+
+	return null
 
 func group_cards(groupName):
 	for childIndex in get_child_count():
 		var child = get_child(childIndex)
 
 		if child.name.begins_with("Card"):
+			print ("adding " + child.name + " to group " + groupName)
 			child.add_to_group(groupName)
 
 func get_cards():
 	return do_get_cards(false)
 
 func do_get_cards(groupCards):
-	var groupName = "cards" + String(currentLevel)
+	var groupName = "cards_" + String(boardId)
+
+	print ("getting cards among " + groupName)
 
 	if groupCards:
 		group_cards(groupName)
