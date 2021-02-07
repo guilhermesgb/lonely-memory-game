@@ -71,7 +71,7 @@ func setup(gameBoard, randomNumberGenerator):
 	touchInputDetector.disable()
 
 func destroy():
-	emit_signal("card_destroyed", self.name)
+	emit_signal("card_destroyed", self)
 	queue_free()
 
 func _on_preparation_done():
@@ -229,6 +229,7 @@ func lock_to_unoccupied_slot():
 		set_z_index(0)
 
 		if not targetSlot.name == "WinSlot":
+			animationPlayer.stop(true)
 			animationPlayer.play("Dust")
 
 func _physics_process(delta):

@@ -6,8 +6,8 @@ export(int) var CURRENT_LEVEL = 1
 
 onready var levelCount = $GuidelineRight/LevelContainer/LevelLabel
 onready var peeksCount = $GuidelineRight/CenterContainer/ItemsPanel/PeeksContainer/PeeksCount
-onready var earnablePoints = $GuidelineRight/PointsLabel/PointsContainer/Points
-onready var totalScore = $GuidelineRight/TotalScoreLabel/TotalScoreContainer/TotalScore
+onready var earnablePoints = $GuidelineRight/PointsContainer/Points
+onready var totalScore = $GuidelineRight/TotalScoreContainer/TotalScore
 onready var goodLuck = $LevelResultContainer/VBoxContainer/GoodLuck
 onready var keepItUp = $LevelResultContainer/VBoxContainer/KeepItUp
 onready var gameOver = $LevelResultContainer/VBoxContainer/GameOver
@@ -61,7 +61,8 @@ func destroy_level():
 		var child = get_child(childIndex)
 
 		if child.name == "Board":
-			child.queue_free()
+			remove_child(child)
+			child.destroy()
 			break
 
 func advance_level(points):

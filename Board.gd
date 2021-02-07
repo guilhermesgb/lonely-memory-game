@@ -30,12 +30,30 @@ var fullPassesCount = 0
 func setup(level):
 	currentLevel = level
 
+func destroy():
+	for slot in get_card_slots():
+		remove_child(slot)
+		slot.queue_free()
+
+	var winSlot = get_win_slot()
+	remove_child(winSlot)
+	winSlot.queue_free()
+
+	for card in get_cards():
+		remove_child(card)
+		card.queue_free()
+
+	queue_free()
+
 func _ready():
 	rng.randomize()
 	calculate_earnable_points()
 	setup_slots_based_on_level()
 	count_unoccupied_slots()
 	free_excess_cards()
+
+func _physics_process(delta):
+	print("there are " + String(get_cards().size()) + " right now")
 
 func group_slots(groupName):
 	for childIndex in get_child_count():
@@ -118,6 +136,7 @@ func count_unoccupied_slots():
 	for slot in get_card_slots():
 		if not slot.is_occupied():
 			availableSlotsCounter = availableSlotsCounter + 1
+			slot.frame = rng.randi_range(0, 28)
 
 func free_excess_cards():
 	var cards = do_get_cards(true)
@@ -148,15 +167,13 @@ func free_excess_cards():
 
 	cards = cardsToSetup
 
-func _on_card_destroyed(name):
-	destroyedCardNames.append(name)
+func _on_card_destroyed(card):
+	destroyedCardNames.append(card.name)
+	remove_child(card)
 
 func _on_Timer_timeout():
 	print("restarting current scene")
 	get_tree().reload_current_scene()
-
-func _draw():
-	draw_circle(Vector2.ZERO, 2000, Color("#493e3e"))
 
 func _on_slot_occupied(_card):
 	occupiedSlotsCounter = occupiedSlotsCounter + 1
@@ -342,6 +359,9 @@ func _on_card_tapped_while_blocked(card):
 		emit_signal("peek_count_updated", earnedPeeksCount)
 
 func _on_win_slot_occupied(card):
+	$Borders.z_index = -2
+	get_win_slot().z_index = -1
+
 	if cardSelectedForWin != null and card.name == cardSelectedForWin.name:
 		for otherCard in get_cards():
 			if (otherCard.name == card.name):

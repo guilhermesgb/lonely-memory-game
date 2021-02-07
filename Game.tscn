@@ -5,35 +5,34 @@
 [ext_resource path="res://icon_lives.png" type="Texture" id=4]
 [ext_resource path="res://icon_peeks.png" type="Texture" id=5]
 
-[sub_resource type="DynamicFont" id=3]
-size = 18
-font_data = ExtResource( 1 )
-
 [sub_resource type="DynamicFont" id=1]
 size = 12
 font_data = ExtResource( 1 )
 
 [sub_resource type="DynamicFont" id=2]
-size = 18
-outline_size = 1
-outline_color = Color( 0.34902, 0.301961, 0.301961, 1 )
-font_data = ExtResource( 1 )
-
-[sub_resource type="DynamicFont" id=7]
 size = 8
 font_data = ExtResource( 1 )
 
-[sub_resource type="DynamicFont" id=8]
-font_data = ExtResource( 1 )
-
-[sub_resource type="DynamicFont" id=6]
-size = 32
+[sub_resource type="DynamicFont" id=3]
+size = 9
 outline_size = 1
 outline_color = Color( 0.34902, 0.301961, 0.301961, 1 )
 font_data = ExtResource( 1 )
 
-[sub_resource type="Animation" id=4]
-resource_name = "HideResult"
+[sub_resource type="DynamicFont" id=4]
+size = 8
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=5]
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=6]
+size = 26
+outline_size = 1
+outline_color = Color( 0.34902, 0.301961, 0.301961, 1 )
+font_data = ExtResource( 1 )
+
+[sub_resource type="Animation" id=7]
 tracks/0/type = "value"
 tracks/0/path = NodePath("LevelResultContainer/VBoxContainer:modulate")
 tracks/0/interp = 1
@@ -47,32 +46,19 @@ tracks/0/keys = {
 "values": [ Color( 1, 1, 1, 0.862745 ), Color( 1, 1, 1, 0 ) ]
 }
 tracks/1/type = "value"
-tracks/1/path = NodePath("LevelResultContainer/VBoxContainer:rect_position")
+tracks/1/path = NodePath("BlackOverlay:modulate")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
 "times": PoolRealArray( 0, 1 ),
-"transitions": PoolRealArray( 1, 0.241484 ),
-"update": 0,
-"values": [ Vector2( 207, 148 ), Vector2( 207, 250 ) ]
-}
-tracks/2/type = "value"
-tracks/2/path = NodePath("BlackOverlay:modulate")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/keys = {
-"times": PoolRealArray( 0, 1 ),
 "transitions": PoolRealArray( 1, 0.0743255 ),
 "update": 0,
 "values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
 }
 
-[sub_resource type="Animation" id=5]
-resource_name = "ShowResult"
+[sub_resource type="Animation" id=8]
 length = 2.0
 tracks/0/type = "value"
 tracks/0/path = NodePath("LevelResultContainer/VBoxContainer:modulate")
@@ -87,24 +73,12 @@ tracks/0/keys = {
 "values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0.862745 ) ]
 }
 tracks/1/type = "value"
-tracks/1/path = NodePath("LevelResultContainer/VBoxContainer:rect_position")
+tracks/1/path = NodePath("BlackOverlay:modulate")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0, 2 ),
-"transitions": PoolRealArray( 0.241484, 1 ),
-"update": 0,
-"values": [ Vector2( 207, 250 ), Vector2( 207, 148 ) ]
-}
-tracks/2/type = "value"
-tracks/2/path = NodePath("BlackOverlay:modulate")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/keys = {
 "times": PoolRealArray( 0, 2 ),
 "transitions": PoolRealArray( 1, 1 ),
 "update": 0,
@@ -115,118 +89,116 @@ tracks/2/keys = {
 script = ExtResource( 3 )
 
 [node name="BoardContainer" type="CenterContainer" parent="."]
-margin_right = 640.0
-margin_bottom = 360.0
+margin_right = 205.0
+margin_bottom = 365.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="BlackOverlay" type="ColorRect" parent="."]
-modulate = Color( 1, 1, 1, 0 )
-margin_left = 22.0
-margin_top = 23.0
-margin_right = 493.0
-margin_bottom = 339.0
+margin_left = 5.0
+margin_top = 6.0
+margin_right = 200.0
+margin_bottom = 292.0
 color = Color( 0, 0, 0, 0.627451 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="GuidelineRight" type="Position2D" parent="."]
-position = Vector2( 558.851, 0 )
+position = Vector2( 148.266, 0 )
 
 [node name="LevelContainer" type="CenterContainer" parent="GuidelineRight"]
-margin_left = -52.0
-margin_top = 30.0
-margin_right = 52.0
-margin_bottom = 53.0
+margin_left = -46.0
+margin_top = 305.0
+margin_right = 44.0
+margin_bottom = 316.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="LevelLabel" type="Label" parent="GuidelineRight/LevelContainer"]
-margin_left = 13.0
-margin_top = 3.0
-margin_right = 90.0
-margin_bottom = 19.0
-custom_fonts/font = SubResource( 3 )
+margin_left = 20.0
+margin_right = 69.0
+margin_bottom = 11.0
+custom_fonts/font = SubResource( 1 )
 custom_colors/font_color = Color( 0.34902, 0.301961, 0.301961, 1 )
 text = "LEVEL 1"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="PointsLabel" type="Label" parent="GuidelineRight"]
-margin_left = -42.1017
-margin_top = 241.096
-margin_right = 4.89825
-margin_bottom = 257.096
-custom_fonts/font = SubResource( 1 )
-custom_colors/font_color = Color( 0.443137, 0.352941, 0.337255, 1 )
+[node name="PointsContainer" type="HBoxContainer" parent="GuidelineRight"]
+margin_left = -42.0
+margin_top = 331.0
+margin_right = 41.0
+margin_bottom = 339.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PointsLabel" type="Label" parent="GuidelineRight/PointsContainer"]
+margin_right = 35.0
+margin_bottom = 8.0
+custom_fonts/font = SubResource( 2 )
+custom_colors/font_color = Color( 0.34902, 0.301961, 0.301961, 1 )
 text = "POINTS:"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="PointsContainer" type="CenterContainer" parent="GuidelineRight/PointsLabel"]
-margin_left = -4.0
-margin_top = 15.0
-margin_right = 91.0
-margin_bottom = 39.0
+[node name="Points" type="Label" parent="GuidelineRight/PointsContainer"]
+margin_left = 39.0
+margin_right = 44.0
+margin_bottom = 8.0
+custom_fonts/font = SubResource( 3 )
+text = "0"
+align = 3
+valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Points" type="Label" parent="GuidelineRight/PointsLabel/PointsContainer"]
-margin_left = 42.0
-margin_top = 4.0
-margin_right = 53.0
-margin_bottom = 20.0
-custom_fonts/font = SubResource( 2 )
-text = "0"
+[node name="TotalScoreContainer" type="HBoxContainer" parent="GuidelineRight"]
+margin_left = -42.0
+margin_top = 342.0
+margin_right = 27.0
+margin_bottom = 350.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="TotalScoreLabel" type="Label" parent="GuidelineRight"]
-margin_left = -42.1017
-margin_top = 290.096
-margin_right = 40.8983
-margin_bottom = 306.096
-custom_fonts/font = SubResource( 1 )
-custom_colors/font_color = Color( 0.443137, 0.352941, 0.337255, 1 )
+[node name="TotalScoreLabel" type="Label" parent="GuidelineRight/TotalScoreContainer"]
+margin_right = 60.0
+margin_bottom = 8.0
+custom_fonts/font = SubResource( 2 )
+custom_colors/font_color = Color( 0.34902, 0.301961, 0.301961, 1 )
 text = "TOTAL SCORE:"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="TotalScoreContainer" type="CenterContainer" parent="GuidelineRight/TotalScoreLabel"]
-margin_left = -4.0
-margin_top = 15.0
-margin_right = 91.0
-margin_bottom = 39.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="TotalScore" type="Label" parent="GuidelineRight/TotalScoreLabel/TotalScoreContainer"]
-margin_left = 42.0
-margin_top = 4.0
-margin_right = 53.0
-margin_bottom = 20.0
-custom_fonts/font = SubResource( 2 )
+[node name="TotalScore" type="Label" parent="GuidelineRight/TotalScoreContainer"]
+margin_left = 64.0
+margin_right = 69.0
+margin_bottom = 8.0
+custom_fonts/font = SubResource( 3 )
 text = "0"
+align = 2
 
 [node name="CenterContainer" type="CenterContainer" parent="GuidelineRight"]
-margin_left = -52.0
-margin_top = 53.0
-margin_right = 52.0
-margin_bottom = 76.0
+margin_left = -51.9439
+margin_top = 312.15
+margin_right = 52.0561
+margin_bottom = 335.15
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="ItemsPanel" type="HBoxContainer" parent="GuidelineRight/CenterContainer"]
-margin_left = 7.0
+margin_left = 12.0
 margin_top = 4.0
-margin_right = 96.0
+margin_right = 92.0
 margin_bottom = 19.0
 __meta__ = {
 "_edit_use_anchors_": false
@@ -251,21 +223,21 @@ margin_left = 12.0
 margin_top = 3.0
 margin_right = 27.0
 margin_bottom = 11.0
-custom_fonts/font = SubResource( 7 )
+custom_fonts/font = SubResource( 4 )
 custom_colors/font_color = Color( 0.34902, 0.301961, 0.301961, 1 )
 text = "x00"
 
 [node name="MarginContainer" type="Label" parent="GuidelineRight/CenterContainer/ItemsPanel"]
 margin_left = 31.0
-margin_right = 58.0
+margin_right = 49.0
 margin_bottom = 15.0
-custom_fonts/font = SubResource( 8 )
+custom_fonts/font = SubResource( 5 )
 custom_colors/font_color = Color( 0.533333, 0.431373, 0.415686, 1 )
-text = "---"
+text = "--"
 
 [node name="LivesContainer" type="HBoxContainer" parent="GuidelineRight/CenterContainer/ItemsPanel"]
-margin_left = 62.0
-margin_right = 89.0
+margin_left = 53.0
+margin_right = 80.0
 margin_bottom = 15.0
 grow_horizontal = 0
 grow_vertical = 0
@@ -286,7 +258,7 @@ margin_left = 12.0
 margin_top = 3.0
 margin_right = 27.0
 margin_bottom = 11.0
-custom_fonts/font = SubResource( 7 )
+custom_fonts/font = SubResource( 4 )
 custom_colors/font_color = Color( 0.34902, 0.301961, 0.301961, 1 )
 text = "x00"
 
@@ -295,47 +267,50 @@ wait_time = 4.0
 one_shot = true
 
 [node name="LevelResultContainer" type="CenterContainer" parent="."]
-margin_right = 641.0
-margin_bottom = 360.0
+margin_left = 5.0
+margin_top = 6.0
+margin_right = 200.0
+margin_bottom = 298.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="VBoxContainer" type="VBoxContainer" parent="LevelResultContainer"]
-modulate = Color( 1, 1, 1, 0 )
-margin_left = 216.0
-margin_top = 120.0
-margin_right = 425.0
-margin_bottom = 239.0
+modulate = Color( 1, 1, 1, 0.862745 )
+margin_left = 15.0
+margin_top = 95.0
+margin_right = 180.0
+margin_bottom = 196.0
+rect_pivot_offset = Vector2( 0, 100 )
 alignment = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="GameOver" type="Label" parent="LevelResultContainer/VBoxContainer"]
-margin_right = 209.0
-margin_bottom = 29.0
+margin_right = 165.0
+margin_bottom = 23.0
 custom_fonts/font = SubResource( 6 )
 text = "Game Over"
 
 [node name="KeepItUp" type="Label" parent="LevelResultContainer/VBoxContainer"]
-margin_top = 33.0
-margin_right = 209.0
-margin_bottom = 62.0
+margin_top = 27.0
+margin_right = 165.0
+margin_bottom = 50.0
 custom_fonts/font = SubResource( 6 )
 text = "Keep it up!"
 
 [node name="GoodLuck" type="Label" parent="LevelResultContainer/VBoxContainer"]
-margin_top = 66.0
-margin_right = 209.0
-margin_bottom = 95.0
+margin_top = 54.0
+margin_right = 165.0
+margin_bottom = 77.0
 custom_fonts/font = SubResource( 6 )
 text = "Good Luck!"
 
 [node name="RetryButton" type="Button" parent="LevelResultContainer/VBoxContainer"]
-margin_top = 99.0
-margin_right = 209.0
-margin_bottom = 119.0
+margin_top = 81.0
+margin_right = 165.0
+margin_bottom = 101.0
 text = "Try Again"
 
 [node name="BeginGameTimer" type="Timer" parent="."]
@@ -343,8 +318,8 @@ wait_time = 3.0
 one_shot = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-anims/HideResult = SubResource( 4 )
-anims/ShowResult = SubResource( 5 )
+anims/HideResult = SubResource( 7 )
+anims/ShowResult = SubResource( 8 )
 [connection signal="timeout" from="NextLevelTimer" to="." method="_on_NextLevelTimer_timeout"]
 [connection signal="pressed" from="LevelResultContainer/VBoxContainer/RetryButton" to="." method="_on_RetryButton_pressed"]
 [connection signal="timeout" from="BeginGameTimer" to="." method="_on_BeginGameTimer_timeout"]

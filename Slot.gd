@@ -1,4 +1,4 @@
-extends Position2D
+extends Node2D
 
 signal slot_occupied(card)
 
