@@ -2,7 +2,7 @@ extends Node2D
 
 const Global = preload("Global.gd")
 
-signal preparation_done
+signal preparation_done(usedCardTypes)
 signal earnable_points_updated(points)
 signal peek_count_updated(count)
 signal player_won(points)
@@ -26,8 +26,10 @@ var successiveNoPairRevealsCount = 0
 var earnedPeeksCount = 0
 
 var fullPassesCount = 0
+var allUsedCardTypes = []
 
-func setup(level):
+func setup(usedCardTypes, level):
+	allUsedCardTypes = usedCardTypes
 	currentLevel = level
 
 func destroy():
@@ -51,9 +53,6 @@ func _ready():
 	setup_slots_based_on_level()
 	count_unoccupied_slots()
 	free_excess_cards()
-
-func _physics_process(delta):
-	print("there are " + String(get_cards().size()) + " right now")
 
 func group_slots(groupName):
 	for childIndex in get_child_count():
@@ -181,7 +180,7 @@ func _on_slot_occupied(_card):
 	if (occupiedSlotsCounter == get_card_slots().size()):
 		prepare_win_slot()
 		assign_types_to_cards()
-		emit_signal("preparation_done")
+		emit_signal("preparation_done", allUsedCardTypes)
 		emit_signal("earnable_points_updated", earnablePoints)
 		emit_signal("peek_count_updated", earnedPeeksCount)
 
@@ -192,10 +191,9 @@ func assign_types_to_cards():
 	var cards = get_cards()
 	var typesToAssign = Global.CardType.values()
 	var typesToAssignCount = ceil(cards.size() / 2.0)
-	var usedTypes = [Global.CardType.NONE]
 
 	while typesToAssignCount > 0:
-		var typeToAssign = find_available_type(typesToAssign, usedTypes)
+		var typeToAssign = find_available_type(typesToAssign)
 
 		if typesToAssignCount == 1:
 			cardSelectedForWin = find_unassigned_card(cards)
@@ -205,18 +203,24 @@ func assign_types_to_cards():
 			find_unassigned_card(cards).set_assigned_type(typeToAssign)
 			find_unassigned_card(cards).set_assigned_type(typeToAssign)
 
-		usedTypes.append(typeToAssign)
+		allUsedCardTypes.append(typeToAssign)
 		typesToAssignCount = typesToAssignCount - 1
 
-func find_available_type(typesToAssign, usedTypes):
+func find_available_type(typesToAssign):
 	var availableTypes = []
 
 	for type in typesToAssign:
-		if type in usedTypes:
+		if type in allUsedCardTypes:
 			continue
 		availableTypes.append(type)
 
-	return availableTypes[rng.randi_range(0, availableTypes.size() - 1)]
+	if availableTypes.size() > 0:
+		return availableTypes[rng.randi_range(0, availableTypes.size() - 1)]
+
+	else:
+		var typeToBeReused = allUsedCardTypes[1]
+		allUsedCardTypes.remove(1)
+		return typeToBeReused
 
 func find_unassigned_card(cards):
 	var unassignedCards = []

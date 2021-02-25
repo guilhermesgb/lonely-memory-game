@@ -1,5 +1,6 @@
 extends Node2D
 
+const Global = preload("Global.gd")
 const boardScene = preload("Board.tscn")
 
 export(int) var CURRENT_LEVEL = 1
@@ -17,7 +18,10 @@ onready var animationPlayer = $AnimationPlayer
 onready var boardContainer = $BoardContainer
 onready var nextLevelTimer = $NextLevelTimer
 
+var allUsedCardTypes = [Global.CardType.NONE]
+
 func _ready():
+	animationPlayer.playback_speed = 2
 	setup_level()
 
 func setup_level():
@@ -44,10 +48,11 @@ func _on_BeginGameTimer_timeout():
 
 func setup_board():
 	var board = boardScene.instance()
-	board.setup(CURRENT_LEVEL)
+	board.setup(allUsedCardTypes, CURRENT_LEVEL)
 	board.z_index = -1
 	boardContainer.add_child(board, true)
 
+	board.connect("preparation_done", self, "_on_preparation_done")
 	board.connect("earnable_points_updated", self, "_on_earnable_points_updated")
 	board.connect("peek_count_updated", self, "_on_peek_count_updated")
 	board.connect("player_won", self, "_on_player_beat_level")
@@ -68,6 +73,9 @@ func destroy_level():
 func advance_level(points):
 	CURRENT_LEVEL = CURRENT_LEVEL + 1
 	totalScore.text = String(int(totalScore.text) + points)
+
+func _on_preparation_done(usedCardTypes):
+	allUsedCardTypes = usedCardTypes
 
 func _on_earnable_points_updated(points):
 	earnablePoints.text = String(points)

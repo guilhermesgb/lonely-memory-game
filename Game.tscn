@@ -96,6 +96,7 @@ __meta__ = {
 }
 
 [node name="BlackOverlay" type="ColorRect" parent="."]
+modulate = Color( 1, 1, 1, 0 )
 margin_left = 5.0
 margin_top = 6.0
 margin_right = 200.0
@@ -138,18 +139,18 @@ __meta__ = {
 }
 
 [node name="PointsLabel" type="Label" parent="GuidelineRight/PointsContainer"]
-margin_right = 35.0
+margin_right = 30.0
 margin_bottom = 8.0
 custom_fonts/font = SubResource( 2 )
 custom_colors/font_color = Color( 0.34902, 0.301961, 0.301961, 1 )
-text = "POINTS:"
+text = "PRIZE:"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Points" type="Label" parent="GuidelineRight/PointsContainer"]
-margin_left = 39.0
-margin_right = 44.0
+margin_left = 34.0
+margin_right = 39.0
 margin_bottom = 8.0
 custom_fonts/font = SubResource( 3 )
 text = "0"
@@ -169,18 +170,18 @@ __meta__ = {
 }
 
 [node name="TotalScoreLabel" type="Label" parent="GuidelineRight/TotalScoreContainer"]
-margin_right = 60.0
+margin_right = 30.0
 margin_bottom = 8.0
 custom_fonts/font = SubResource( 2 )
 custom_colors/font_color = Color( 0.34902, 0.301961, 0.301961, 1 )
-text = "TOTAL SCORE:"
+text = "SCORE:"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="TotalScore" type="Label" parent="GuidelineRight/TotalScoreContainer"]
-margin_left = 64.0
-margin_right = 69.0
+margin_left = 34.0
+margin_right = 39.0
 margin_bottom = 8.0
 custom_fonts/font = SubResource( 3 )
 text = "0"
@@ -263,7 +264,7 @@ custom_colors/font_color = Color( 0.34902, 0.301961, 0.301961, 1 )
 text = "x00"
 
 [node name="NextLevelTimer" type="Timer" parent="."]
-wait_time = 4.0
+wait_time = 2.0
 one_shot = true
 
 [node name="LevelResultContainer" type="CenterContainer" parent="."]
@@ -276,7 +277,7 @@ __meta__ = {
 }
 
 [node name="VBoxContainer" type="VBoxContainer" parent="LevelResultContainer"]
-modulate = Color( 1, 1, 1, 0.862745 )
+modulate = Color( 1, 1, 1, 0 )
 margin_left = 15.0
 margin_top = 95.0
 margin_right = 180.0

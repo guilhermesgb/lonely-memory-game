@@ -18,7 +18,20 @@ const textureIcons = [
 	preload("res://card_icon_12.png"),
 	preload("res://card_icon_13.png"),
 	preload("res://card_icon_14.png"),
-	preload("res://card_icon_15.png")
+	preload("res://card_icon_15.png"),
+	preload("res://card_icon_16.png"),
+	preload("res://card_icon_17.png"),
+	preload("res://card_icon_18.png"),
+	preload("res://card_icon_19.png"),
+	preload("res://card_icon_20.png"),
+	preload("res://card_icon_21.png"),
+	preload("res://card_icon_22.png"),
+	preload("res://card_icon_23.png"),
+	preload("res://card_icon_24.png"),
+	preload("res://card_icon_25.png"),
+	preload("res://card_icon_26.png"),
+	preload("res://card_icon_27.png"),
+	preload("res://card_icon_28.png")
 ]
 
 enum CardState {
@@ -64,6 +77,7 @@ func setup(gameBoard, randomNumberGenerator):
 	noise.octaves = 4
 	noise.period = 20
 	noise.persistence = 0.8
+	animationPlayer.playback_speed = 2
 
 	board.connect("preparation_done", self, "_on_preparation_done")
 
@@ -74,7 +88,7 @@ func destroy():
 	emit_signal("card_destroyed", self)
 	queue_free()
 
-func _on_preparation_done():
+func _on_preparation_done(_usedCardTypes):
 	touchInputDetector.enable(false)
 	canLockToWinSlot = true
 
@@ -87,7 +101,7 @@ func get_assigned_type():
 func set_assigned_type(typeToAssign):
 	assignedType = typeToAssign
 
-	if assignedType >= 1 and assignedType <= 15:
+	if assignedType >= 1 and assignedType <= Global.CardType.values().size() - 1:
 		icon.set_texture(textureIcons[assignedType - 1])
 
 func set_as_selectable(propagateUpdate):

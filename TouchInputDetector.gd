@@ -82,6 +82,7 @@ func _process(_delta):
 func _on_LongPressTimer_timeout():
 	if startedTouchPress and isStillTouchPressing:
 		touchType = TouchType.LONG_PRESS
+		emit_signal("long_pressed")
 
 func _on_TouchInputArea_released():
 	if not isEnabled:
@@ -97,6 +98,3 @@ func _on_TouchInputArea_released():
 
 	elif touchType == TouchType.SIMPLE_TAP:
 		emit_signal("tapped")
-
-	elif touchType == TouchType.LONG_PRESS:
-		emit_signal("long_pressed")
